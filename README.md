@@ -12,7 +12,7 @@ This repository contains the official SecureLend developer documentation, powere
 
 ## Editing docs
 - All docs are written in MDX
-- Navigation is defined in `mint.json`
+- Navigation is defined in `docs.json`
 - Changes to `main` deploy automatically
 
 ## Local preview (optional)
