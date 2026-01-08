@@ -15,8 +15,15 @@
         "group": "Platform",
         "pages": [
           "platform/overview",
-          "platform/concepts",
-          "platform/environments"
+          "platform/concepts"
+        ]
+      },
+      {
+        "group": "Platform (Advanced)",
+        "protected": true,
+        "pages": [
+          "platform/environments",
+          "platform/security"
         ]
       },
       {
@@ -29,6 +36,7 @@
       },
       {
         "group": "MCP Integrations",
+        "protected": true,
         "pages": [
           "mcp/overview",
           "mcp/setup",
@@ -45,8 +53,7 @@
       {
         "group": "Guides",
         "pages": [
-          "guides/errors",
-          "guides/security"
+          "guides/errors"
         ]
       }
     ]
