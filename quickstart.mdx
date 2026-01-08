@@ -2,4 +2,61 @@
 title: Quickstart
 ---
 
-Coming soon.
+This guide will get you up and running with the SecureLend SDK.
+
+## Installation
+
+First, install the SDK using your favorite package manager.
+
+```bash
+npm install @securelend/sdk
+```
+
+## Example: Get Loan Offers
+
+Here's a runnable example to fetch loan offers. Make sure to replace `'YOUR_API_KEY'` with your actual key.
+
+```javascript
+import { SecureLend } from '@securelend/sdk';
+
+const client = new SecureLend({
+  apiKey: 'YOUR_API_KEY',
+});
+
+async function getOffers() {
+  try {
+    const offers = await client.getLoanOffers({
+      amount: 50000,
+      term: 12, // in months
+      businessType: 'SaaS',
+    });
+    console.log('Successfully fetched offers:', offers);
+    return offers;
+  } catch (error) {
+    console.error('Failed to fetch offers:', error);
+  }
+}
+
+getOffers();
+```
+
+## Expected Output
+
+If successful, you will see a list of loan offers logged to your console.
+
+```json
+Successfully fetched offers: [
+  {
+    "lender": "Lender A",
+    "amount": 50000,
+    "interestRate": 0.05,
+    "term": 12
+  },
+  {
+    "lender": "Lender B",
+    "amount": 50000,
+    "interestRate": 0.055,
+    "term": 12
+  }
+]
+```

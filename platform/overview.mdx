@@ -1,5 +1,19 @@
 ---
-title: Overview
+title: Platform Overview
 ---
 
-Coming soon.
+This document provides a high-level overview of the SecureLend platform architecture and core principles.
+
+## High-Level Flow
+1.  **Authentication**: Your application authenticates with our API using a secure key.
+2.  **Request**: You send a request to find loan offers, providing business and loan criteria.
+3.  **Matching**: Our platform matches the request with offers from our network of lenders.
+4.  **Response**: We return a list of eligible offers to your application.
+5.  **Application**: You can then submit a formal application for a chosen offer.
+
+## Sandbox vs. Production
+- **Sandbox**: A complete testing environment that mirrors production. Use it for development and integration testing. All data is synthetic.
+- **Production**: The live environment for real transactions. Access is granted after a successful integration review.
+
+## Trust & Guarantees
+SecureLend is committed to security and reliability. Our platform is built with industry-best practices for data encryption, access control, and uptime. All data is encrypted in transit and at rest.

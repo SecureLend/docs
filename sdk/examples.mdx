@@ -1,5 +1,47 @@
 ---
-title: Examples
+title: Code Examples
 ---
 
-Coming soon.
+Here are some runnable examples to help you get started with common use cases.
+
+## Express API Server
+This example shows how to create a simple Express.js API endpoint that uses the SecureLend SDK to fetch loan offers.
+
+```javascript
+import express from 'express';
+import { SecureLend } from '@securelend/sdk';
+
+const app = express();
+const port = 3000;
+
+const client = new SecureLend({
+  apiKey: process.env.SECURELEND_API_KEY,
+});
+
+app.use(express.json());
+
+app.post('/get-offers', async (req, res) => {
+  try {
+    const { amount, term, businessType } = req.body;
+    if (!amount || !term || !businessType) {
+      return res.status(400).json({ error: 'Missing required parameters.' });
+    }
+
+    const offers = await client.getLoanOffers({ amount, term, businessType });
+    res.json(offers);
+  } catch (error) {
+    console.error('API Error:', error);
+    res.status(500).json({ error: 'Failed to fetch loan offers.' });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
+```
+To run this example:
+1. Save the code as `server.js`.
+2. Run `npm install express @securelend/sdk`.
+3. Set your API key: `export SECURELEND_API_KEY='your_key_here'`.
+4. Start the server: `node server.js`.
+5. Send a POST request to `http://localhost:3000/get-offers` with a JSON body.
