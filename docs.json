@@ -1,0 +1,55 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "SecureLend Docs",
+  "theme": "venus",
+  "favicon": "/favicon.png",
+  "colors": {
+    "primary": "#3D84FF",
+    "light": "#5C9DFF",
+    "dark": "#2A78FF"
+  },
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": ["index", "quickstart", "authentication"]
+    },
+    {
+      "group": "Platform",
+      "pages": [
+        "platform/overview",
+        "platform/concepts",
+        "platform/environments"
+      ]
+    },
+    {
+      "group": "SDKs",
+      "pages": [
+        "sdk/overview",
+        "sdk/javascript",
+        "sdk/examples"
+      ]
+    },
+    {
+      "group": "MCP Integrations",
+      "pages": [
+        "mcp/overview",
+        "mcp/setup",
+        "mcp/financial-services"
+      ]
+    },
+    {
+      "group": "APIs",
+      "pages": [
+        "api/loans",
+        "api/webhooks"
+      ]
+    },
+    {
+      "group": "Guides",
+      "pages": [
+        "guides/errors",
+        "guides/security"
+      ]
+    }
+  ]
+}
