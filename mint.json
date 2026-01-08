@@ -1,6 +1,13 @@
 {
+  "$schema": "https://mintlify.com/schema.json",
   "name": "SecureLend Docs",
-  "theme": "mint",
+  "favicon": "/favicon.png",
+  "colors": {
+    "primary": "#3D84FF",
+    "light": "#5C9DFF",
+    "dark": "#2A78FF"
+  },
+  "theme": "venus",
   "navigation": [
     {
       "group": "Getting Started",
