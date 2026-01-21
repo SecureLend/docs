@@ -1,5 +1,748 @@
 ---
-title: JavaScript SDK
+title: "JavaScript/TypeScript SDK"
+description: "Complete reference for @securelend/sdk"
 ---
 
-Coming soon.
+# JavaScript/TypeScript SDK
+
+Complete reference for the SecureLend TypeScript/JavaScript SDK.
+
+---
+
+## Installation
+
+<CodeGroup>
+```bash npm
+npm install @securelend/sdk
+```
+
+```bash pnpm
+pnpm add @securelend/sdk
+```
+
+```bash yarn
+yarn add @securelend/sdk
+```
+
+</CodeGroup>
+
+---
+
+## Initialization
+
+### Basic Setup
+
+```typescript
+import { SecureLend } from "@securelend/sdk";
+
+// Connects to https://mcp.securelend.ai/mcp by default
+const securelend = new SecureLend();
+```
+
+### Custom Configuration
+
+```typescript
+import { SecureLend } from "@securelend/sdk";
+
+const securelend = new SecureLend({
+  serverUrl: "https://custom-mcp-server.com/mcp", // Optional
+  timeout: 30000, // 30 seconds, default: 10000
+  retries: 3, // Number of retries, default: 2
+});
+```
+
+<Warning>
+  Most users should use the default configuration. Custom server URLs are for
+  advanced use cases only.
+</Warning>
+
+---
+
+## TypeScript Support
+
+The SDK includes complete TypeScript definitions:
+
+```typescript
+import {
+  SecureLend,
+  BusinessLoanRequest,
+  LoanComparisonResponse,
+  LoanOffer,
+  MortgageCalculationRequest,
+  MortgagePaymentResponse,
+} from "@securelend/sdk";
+
+// Type-safe requests
+const request: BusinessLoanRequest = {
+  loanAmount: 200000,
+  purpose: "equipment",
+  annualRevenue: 1200000,
+};
+
+// Type-safe responses
+const response: LoanComparisonResponse =
+  await securelend.compareBusinessLoans(request);
+
+// Access typed properties
+const bestOffer: LoanOffer = response.offers[0];
+console.log(bestOffer.interestRate); // Type: number
+console.log(bestOffer.lenderName); // Type: string
+```
+
+---
+
+## API Reference
+
+### Loan Comparison Methods
+
+#### compareBusinessLoans()
+
+Compare business loan offers.
+
+```typescript
+const result = await securelend.compareBusinessLoans({
+  loanAmount: 200000, // Required: $1,000+
+  purpose: "equipment", // Required: string
+  annualRevenue: 1200000, // Optional: business revenue
+  industry: "technology", // Optional: business industry
+  state: "CA", // Optional: 2-letter state code
+  creditScore: 720, // Optional: 300-850
+});
+
+// Returns
+interface LoanComparisonResponse {
+  offers: LoanOffer[];
+  sessionId: string;
+  timestamp: string;
+}
+
+interface LoanOffer {
+  offerId: string;
+  lenderName: string;
+  productName: string;
+  interestRate: number;
+  monthlyPayment: number;
+  termMonths: number;
+  loanAmount: number;
+  approvalLikelihood?: number;
+  originationFee?: number;
+  prepaymentPenalty?: boolean;
+}
+```
+
+#### comparePersonalLoans()
+
+Compare personal loan offers.
+
+```typescript
+const result = await securelend.comparePersonalLoans({
+  loanAmount: 25000, // Required: $1,000-$100,000
+  purpose: "debt_consolidation", // Required: enum
+  creditScore: 720, // Optional: 300-850
+  employmentStatus: "employed", // Optional: enum
+  monthlyIncome: 5000, // Optional: USD
+  state: "CA", // Optional: 2-letter code
+});
+
+// Purpose options
+type LoanPurpose =
+  | "debt_consolidation"
+  | "home_improvement"
+  | "major_purchase"
+  | "medical"
+  | "vacation"
+  | "other";
+
+// Employment status options
+type EmploymentStatus = "employed" | "self_employed" | "retired" | "unemployed";
+```
+
+#### compareCarLoans()
+
+Compare auto loan rates.
+
+```typescript
+const result = await securelend.compareCarLoans({
+  loanAmount: 35000, // Required: $1,000-$100,000
+  isNew: true, // Required: new or used vehicle
+  creditScore: 750, // Optional: 300-850
+  state: "CA", // Optional: 2-letter state code
+});
+```
+
+#### compareStudentLoans()
+
+Compare student loan options.
+
+```typescript
+const result = await securelend.compareStudentLoans({
+  loanAmount: 50000, // Required: $1,000-$250,000
+  degreeType: "graduate", // Required: enum
+  creditScore: 680, // Optional: 300-850
+  coSignerCreditScore: 750, // Optional: 300-850
+  state: "CA", // Optional: 2-letter code
+});
+
+// Degree type options
+type DegreeType = "undergraduate" | "graduate" | "mba" | "medical" | "law";
+```
+
+#### comparePersonalMortgages()
+
+Compare mortgage rates for home purchases.
+
+```typescript
+const result = await securelend.comparePersonalMortgages({
+  loanAmount: 320000, // Required: $50,000-$2,000,000
+  loanType: "conventional", // Required: enum
+  homePrice: 400000, // Optional: property value
+  downPayment: 80000, // Optional: down payment amount
+  creditScore: 720, // Optional: 500-850
+  propertyType: "primary", // Optional: enum
+  state: "CA", // Optional: 2-letter code
+});
+
+// Loan type options
+type MortgageLoanType = "conventional" | "fha" | "va" | "jumbo" | "refinance";
+
+// Property type options
+type PropertyType = "primary" | "secondary" | "investment";
+```
+
+---
+
+### Calculator Methods
+
+#### calculateLoanPayment()
+
+Calculate monthly payment for any loan.
+
+```typescript
+const result = await securelend.calculateLoanPayment({
+  loanAmount: 200000, // Required: loan principal
+  interestRate: 7.5, // Required: annual rate (e.g., 7.5 for 7.5%)
+  loanTermInMonths: 60, // Required: term in months
+});
+
+// Returns
+interface LoanCalculation {
+  monthlyPayment: number;
+  totalInterest: number;
+  totalAmount: number;
+  amortizationSchedule?: Array<{
+    month: number;
+    payment: number;
+    principal: number;
+    interest: number;
+    balance: number;
+  }>;
+}
+```
+
+#### calculateMortgagePayment()
+
+Calculate PITI (Principal, Interest, Taxes, Insurance) mortgage payment.
+
+```typescript
+const result = await securelend.calculateMortgagePayment({
+  propertyValue: 400000, // Required: property value
+  downPayment: 80000, // Required: down payment
+  interestRate: 6.5, // Required: annual rate
+  loanTermInYears: 30, // Required: term in years
+  propertyTaxRate: 1.2, // Required: annual tax rate %
+  homeInsurance: 1500, // Required: annual insurance cost
+});
+
+// Returns
+interface MortgagePaymentResponse {
+  monthlyPayment: number; // Total PITI payment
+  principalAndInterest: number; // P&I portion
+  propertyTaxes: number; // Monthly taxes
+  insurance: number; // Monthly insurance
+  loanAmount: number; // Calculated loan amount
+  totalInterest: number; // Over life of loan
+}
+```
+
+#### compareLeaseVsPurchase()
+
+Compare total costs of leasing vs buying a vehicle.
+
+```typescript
+const result = await securelend.compareLeaseVsPurchase({
+  purchasePrice: 35000, // Required: vehicle price
+  downPayment: 5000, // Required: purchase down payment
+  interestRate: 6.0, // Required: purchase loan rate
+  loanTermInMonths: 60, // Required: purchase term
+  monthlyLeasePayment: 450, // Required: lease payment
+  leaseTermInMonths: 36, // Required: lease term
+  moneyFactor: 0.0025, // Required: lease money factor
+  residualValuePercentage: 55, // Required: 0-100
+  salesTaxRate: 7.5, // Required: tax rate %
+  expectedOwnershipInMonths: 60, // Required: how long keeping vehicle
+  acquisitionFee: 595, // Optional: lease acquisition fee
+  securityDeposit: 0, // Optional: lease security deposit
+});
+
+// Returns
+interface LeaseVsPurchaseResponse {
+  leaseTotalCost: number;
+  purchaseTotalCost: number;
+  costDifference: number;
+  recommendation: "lease" | "purchase";
+  breakEvenMonth: number;
+}
+```
+
+---
+
+### Banking & Credit Card Methods
+
+#### comparePersonalBanking()
+
+Compare checking and savings accounts.
+
+```typescript
+const result = await securelend.comparePersonalBanking({
+  features: [
+    // Optional: desired features
+    "no_monthly_fees",
+    "high_interest",
+    "mobile_deposit",
+    "atm_access",
+  ],
+});
+```
+
+#### compareBusinessBanking()
+
+Compare business banking products.
+
+```typescript
+const result = await securelend.compareBusinessBanking({
+  industry: "technology", // Optional: business industry
+  monthlyTransactions: 200, // Optional: estimated transactions
+});
+```
+
+#### compareSavingsAccounts()
+
+Compare high-yield savings accounts.
+
+```typescript
+const result = await securelend.compareSavingsAccounts({
+  initialDeposit: 10000, // Optional: starting balance
+});
+```
+
+#### comparePersonalCreditCards()
+
+Compare personal credit card offers.
+
+```typescript
+const result = await securelend.comparePersonalCreditCards({
+  creditScore: 750, // Optional: 300-850
+  rewardsType: "cash_back", // Optional: rewards preference
+});
+
+// Rewards type options
+type RewardsType = "cash_back" | "travel" | "points";
+```
+
+#### compareBusinessCreditCards()
+
+Compare business credit card options.
+
+```typescript
+const result = await securelend.compareBusinessCreditCards({
+  creditScore: 720, // Optional: 300-850
+  annualRevenue: 1000000, // Optional: business revenue
+  businessAgeInYears: 3, // Optional: years in business
+});
+```
+
+---
+
+### Application Management Methods
+
+<Warning>
+  Application methods handle sensitive user data. Always obtain explicit user
+  consent before calling these methods.
+</Warning>
+
+#### getOffer()
+
+Submit application to one selected lender.
+
+```typescript
+const result = await securelend.getOffer({
+  applicant: {
+    firstName: "John",
+    lastName: "Doe",
+    email: "john@example.com",
+    phone: "+1-555-0100", // Optional
+  },
+  applicationData: {
+    // Original loan search parameters
+    loanAmount: 200000,
+    purpose: "equipment",
+    // ... other parameters
+  },
+  productType: "BUSINESS_LOAN", // Enum: see below
+  provider: {
+    providerId: "provider-123",
+    providerName: "ABC Business Capital",
+  },
+});
+
+// Product type options
+type ProductType =
+  | "INSTALLMENT_LOAN"
+  | "LINE_OF_CREDIT"
+  | "SHORT_TERM_CREDIT"
+  | "BNPL"
+  | "MORTGAGE"
+  | "AUTO_LOAN"
+  | "AUTO_REFINANCE"
+  | "STUDENT_LOAN"
+  | "STUDENT_LOAN_REFINANCE"
+  | "BUSINESS_LOAN"
+  | "BUSINESS_BANKING"
+  | "BUSINESS_CREDIT_CARD"
+  | "PERSONAL_BANKING"
+  | "SAVINGS_ACCOUNT"
+  | "PERSONAL_CREDIT_CARD";
+```
+
+#### trackOfferStatus()
+
+Check status of submitted applications.
+
+```typescript
+// By application ID
+const status = await securelend.trackOfferStatus({
+  applicationId: "app-123",
+});
+
+// Or by email (returns all applications)
+const statuses = await securelend.trackOfferStatus({
+  email: "john@example.com",
+});
+```
+
+---
+
+## Error Handling
+
+The SDK throws typed errors for different failure scenarios:
+
+```typescript
+import { SecureLend, SecureLendError } from "@securelend/sdk";
+
+const securelend = new SecureLend();
+
+try {
+  const loans = await securelend.compareBusinessLoans({
+    loanAmount: 200000,
+    purpose: "equipment",
+  });
+
+  console.log(`Found ${loans.offers.length} offers`);
+} catch (error) {
+  if (error instanceof SecureLendError) {
+    // Structured SecureLend error
+    console.error("Error Code:", error.code);
+    console.error("Message:", error.message);
+    console.error("Details:", error.details);
+
+    // Common error codes
+    switch (error.code) {
+      case "INVALID_PARAMETER":
+        // Handle validation error
+        break;
+      case "RATE_LIMIT_EXCEEDED":
+        // Handle rate limit
+        break;
+      case "SERVICE_UNAVAILABLE":
+        // Handle service outage
+        break;
+      case "NETWORK_ERROR":
+        // Handle network issues
+        break;
+    }
+  } else {
+    // Unexpected error
+    console.error("Unexpected error:", error);
+  }
+}
+```
+
+### Error Types
+
+```typescript
+interface SecureLendError extends Error {
+  code: ErrorCode;
+  message: string;
+  details?: Record<string, any>;
+  statusCode?: number;
+}
+
+type ErrorCode =
+  | "INVALID_PARAMETER"
+  | "RATE_LIMIT_EXCEEDED"
+  | "SERVICE_UNAVAILABLE"
+  | "NETWORK_ERROR"
+  | "TIMEOUT"
+  | "PROVIDER_ERROR"
+  | "AUTHENTICATION_ERROR";
+```
+
+---
+
+## Platform-Specific Usage
+
+### Node.js
+
+Works natively in Node.js 16+:
+
+```typescript
+import { SecureLend } from "@securelend/sdk";
+
+const securelend = new SecureLend();
+const loans = await securelend.compareBusinessLoans({
+  loanAmount: 200000,
+  purpose: "equipment",
+});
+```
+
+### Next.js
+
+#### API Routes
+
+```typescript
+// app/api/compare-loans/route.ts
+import { SecureLend } from "@securelend/sdk";
+import { NextResponse } from "next/server";
+
+export async function POST(request: Request) {
+  const body = await request.json();
+
+  const securelend = new SecureLend();
+
+  try {
+    const result = await securelend.compareBusinessLoans({
+      loanAmount: body.amount,
+      purpose: body.purpose,
+      annualRevenue: body.revenue,
+    });
+
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error("Loan comparison failed:", error);
+    return NextResponse.json(
+      { error: "Failed to compare loans" },
+      { status: 500 },
+    );
+  }
+}
+```
+
+#### Server Components
+
+```typescript
+// app/loans/page.tsx
+import { SecureLend } from '@securelend/sdk';
+
+export default async function LoansPage() {
+  const securelend = new SecureLend();
+
+  const loans = await securelend.compareBusinessLoans({
+    loanAmount: 200000,
+    purpose: 'equipment'
+  });
+
+  return (
+    <div>
+      <h1>Loan Offers</h1>
+      {loans.offers.map(offer => (
+        <div key={offer.offerId}>
+          <h2>{offer.lenderName}</h2>
+          <p>{offer.interestRate}% APR</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+### React (Client-Side)
+
+```typescript
+import { useState, useEffect } from 'react';
+import { SecureLend } from '@securelend/sdk';
+
+function LoanComparison() {
+  const [offers, setOffers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const securelend = new SecureLend();
+
+    securelend.compareBusinessLoans({
+      loanAmount: 200000,
+      purpose: 'equipment'
+    })
+    .then(result => {
+      setOffers(result.offers);
+      setLoading(false);
+    })
+    .catch(console.error);
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+
+  return (
+    <div>
+      {offers.map(offer => (
+        <LoanCard key={offer.offerId} offer={offer} />
+      ))}
+    </div>
+  );
+}
+```
+
+### Edge Runtime (Vercel, Cloudflare Workers)
+
+The SDK works in edge runtimes:
+
+```typescript
+// Edge API route
+import { SecureLend } from "@securelend/sdk";
+
+export const config = {
+  runtime: "edge",
+};
+
+export default async function handler(req: Request) {
+  const securelend = new SecureLend();
+
+  const loans = await securelend.compareBusinessLoans({
+    loanAmount: 200000,
+    purpose: "equipment",
+  });
+
+  return new Response(JSON.stringify(loans), {
+    headers: { "Content-Type": "application/json" },
+  });
+}
+```
+
+---
+
+## Rate Limits
+
+**Comparison Tools:** 100 requests per minute per IP  
+**Application Tools:** 10 requests per minute per email
+
+The SDK automatically handles rate limiting with exponential backoff.
+
+```typescript
+const securelend = new SecureLend({
+  retries: 3, // Retry up to 3 times on rate limit
+  timeout: 30000, // 30 second timeout
+});
+```
+
+---
+
+## Best Practices
+
+### 1. Reuse Client Instances
+
+```typescript
+// ✅ Good: Create once, reuse
+const securelend = new SecureLend();
+
+async function compareLoans() {
+  return securelend.compareBusinessLoans({ ... });
+}
+
+// ❌ Bad: Create new instance each time
+async function compareLoans() {
+  const securelend = new SecureLend();
+  return securelend.compareBusinessLoans({ ... });
+}
+```
+
+### 2. Handle Errors Gracefully
+
+```typescript
+try {
+  const loans = await securelend.compareBusinessLoans({ ... });
+  return loans;
+} catch (error) {
+  if (error instanceof SecureLendError) {
+    // Log structured error
+    logger.error('Loan comparison failed', {
+      code: error.code,
+      details: error.details
+    });
+  }
+  // Return fallback or rethrow
+  throw error;
+}
+```
+
+### 3. Use TypeScript Types
+
+```typescript
+import { BusinessLoanRequest, LoanComparisonResponse } from "@securelend/sdk";
+
+async function getLoans(
+  request: BusinessLoanRequest,
+): Promise<LoanComparisonResponse> {
+  const securelend = new SecureLend();
+  return securelend.compareBusinessLoans(request);
+}
+```
+
+### 4. Validate Input Early
+
+```typescript
+function validateLoanRequest(amount: number, purpose: string) {
+  if (amount < 1000 || amount > 5000000) {
+    throw new Error("Loan amount must be between $1,000 and $5,000,000");
+  }
+
+  const validPurposes = ["equipment", "working_capital", "expansion"];
+  if (!validPurposes.includes(purpose)) {
+    throw new Error(`Invalid purpose: ${purpose}`);
+  }
+}
+```
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Code Examples" icon="code" href="/sdk/examples">
+    Practical examples and patterns
+  </Card>
+
+  <Card title="Tool Reference" icon="book" href="/mcp/tools">
+    All 20 tools documented
+  </Card>
+
+  <Card
+    title="GitHub Repository"
+    icon="github"
+    href="https://github.com/SecureLend/sdk"
+  >
+    View source and contribute
+  </Card>
+
+  <Card title="Support" icon="life-ring" href="mailto:developers@securelend.ai">
+    Get help from our team
+  </Card>
+</CardGroup>

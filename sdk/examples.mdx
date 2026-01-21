@@ -1,47 +1,985 @@
 ---
-title: Code Examples
+title: "SDK Examples"
+description: "Practical examples and code patterns for @securelend/sdk"
 ---
 
-Here are some runnable examples to help you get started with common use cases.
+# SDK Examples
 
-## Express API Server
-This example shows how to create a simple Express.js API endpoint that uses the SecureLend SDK to fetch loan offers.
+Real-world examples showing how to use the SecureLend SDK in different scenarios.
 
-```javascript
-import express from 'express';
-import { SecureLend } from '@securelend/sdk';
+---
 
-const app = express();
-const port = 3000;
+## Basic Examples
 
-const client = new SecureLend({
-  apiKey: process.env.SECURELEND_API_KEY,
-});
+### Compare Business Loans
 
-app.use(express.json());
+```typescript
+import { SecureLend } from "@securelend/sdk";
 
-app.post('/get-offers', async (req, res) => {
+async function compareBusinessLoans() {
+  const securelend = new SecureLend();
+
+  const result = await securelend.compareBusinessLoans({
+    loanAmount: 200000,
+    purpose: "equipment",
+    annualRevenue: 1200000,
+    industry: "technology",
+    creditScore: 720,
+    state: "CA",
+  });
+
+  console.log(`Found ${result.offers.length} loan offers`);
+
+  // Display top 3 offers
+  result.offers.slice(0, 3).forEach((offer, index) => {
+    console.log(`\n${index + 1}. ${offer.lenderName}`);
+    console.log(`   Rate: ${offer.interestRate}% APR`);
+    console.log(`   Monthly: $${offer.monthlyPayment.toLocaleString()}`);
+    console.log(`   Term: ${offer.termMonths} months`);
+    console.log(`   Approval: ${offer.approvalLikelihood}%`);
+  });
+
+  return result.offers[0]; // Best offer
+}
+
+compareBusinessLoans();
+```
+
+### Calculate Mortgage Payment
+
+```typescript
+import { SecureLend } from "@securelend/sdk";
+
+async function calculateMonthlyPayment() {
+  const securelend = new SecureLend();
+
+  const result = await securelend.calculateMortgagePayment({
+    propertyValue: 400000,
+    downPayment: 80000, // 20% down
+    interestRate: 6.5,
+    loanTermInYears: 30,
+    propertyTaxRate: 1.2,
+    homeInsurance: 1500,
+  });
+
+  console.log("Monthly Payment Breakdown:");
+  console.log(
+    `Principal & Interest: $${result.principalAndInterest.toLocaleString()}`,
+  );
+  console.log(`Property Taxes: $${result.propertyTaxes.toLocaleString()}`);
+  console.log(`Insurance: $${result.insurance.toLocaleString()}`);
+  console.log(`\nTotal PITI: $${result.monthlyPayment.toLocaleString()}`);
+  console.log(
+    `\nTotal Interest Over Life: $${result.totalInterest.toLocaleString()}`,
+  );
+
+  return result;
+}
+
+calculateMonthlyPayment();
+```
+
+### Compare Personal Loans
+
+```typescript
+import { SecureLend } from "@securelend/sdk";
+
+async function findBestPersonalLoan() {
+  const securelend = new SecureLend();
+
+  const result = await securelend.comparePersonalLoans({
+    loanAmount: 25000,
+    purpose: "debt_consolidation",
+    creditScore: 720,
+    employmentStatus: "employed",
+    monthlyIncome: 5000,
+    state: "CA",
+  });
+
+  // Sort by interest rate
+  const sortedOffers = result.offers.sort(
+    (a, b) => a.interestRate - b.interestRate,
+  );
+
+  // Best offer
+  const best = sortedOffers[0];
+  console.log(`Best Rate: ${best.interestRate}% from ${best.lenderName}`);
+  console.log(`Monthly Payment: $${best.monthlyPayment}`);
+  console.log(
+    `Total Interest: $${(best.monthlyPayment * best.termMonths - 25000).toFixed(2)}`,
+  );
+
+  return best;
+}
+
+findBestPersonalLoan();
+```
+
+---
+
+## Web Application Examples
+
+### Next.js API Route
+
+Create a serverless API endpoint for loan comparison:
+
+```typescript
+// app/api/loans/compare/route.ts
+import { SecureLend } from "@securelend/sdk";
+import { NextResponse } from "next/server";
+
+export async function POST(request: Request) {
   try {
-    const { amount, term, businessType } = req.body;
-    if (!amount || !term || !businessType) {
-      return res.status(400).json({ error: 'Missing required parameters.' });
+    const body = await request.json();
+
+    // Validate input
+    if (!body.loanAmount || !body.purpose) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 },
+      );
     }
 
-    const offers = await client.getLoanOffers({ amount, term, businessType });
-    res.json(offers);
-  } catch (error) {
-    console.error('API Error:', error);
-    res.status(500).json({ error: 'Failed to fetch loan offers.' });
-  }
-});
+    const securelend = new SecureLend();
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+    const result = await securelend.compareBusinessLoans({
+      loanAmount: body.loanAmount,
+      purpose: body.purpose,
+      annualRevenue: body.annualRevenue,
+      industry: body.industry,
+      creditScore: body.creditScore,
+      state: body.state,
+    });
+
+    return NextResponse.json({
+      success: true,
+      offers: result.offers,
+      count: result.offers.length,
+    });
+  } catch (error) {
+    console.error("Loan comparison failed:", error);
+
+    return NextResponse.json(
+      { error: "Failed to compare loans" },
+      { status: 500 },
+    );
+  }
+}
+```
+
+### Next.js Server Component
+
+```typescript
+// app/loans/[amount]/page.tsx
+import { SecureLend } from '@securelend/sdk';
+
+interface PageProps {
+  params: {
+    amount: string;
+  };
+  searchParams: {
+    purpose?: string;
+  };
+}
+
+export default async function LoansPage({ params, searchParams }: PageProps) {
+  const securelend = new SecureLend();
+
+  const loanAmount = parseInt(params.amount);
+  const purpose = searchParams.purpose || 'working_capital';
+
+  const result = await securelend.compareBusinessLoans({
+    loanAmount,
+    purpose
+  });
+
+  return (
+    <div className="container mx-auto p-8">
+      <h1 className="text-3xl font-bold mb-6">
+        {result.offers.length} Loan Offers for ${loanAmount.toLocaleString()}
+      </h1>
+
+      <div className="grid gap-4">
+        {result.offers.map(offer => (
+          <div key={offer.offerId} className="border rounded-lg p-6">
+            <h2 className="text-xl font-semibold">{offer.lenderName}</h2>
+            <p className="text-2xl text-blue-600">{offer.interestRate}% APR</p>
+            <p className="text-gray-600">
+              ${offer.monthlyPayment.toLocaleString()}/month for {offer.termMonths} months
+            </p>
+            {offer.approvalLikelihood && (
+              <p className="text-sm text-green-600">
+                {offer.approvalLikelihood}% approval likelihood
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+### React Client Component
+
+```typescript
+// components/LoanComparison.tsx
+'use client';
+
+import { useState } from 'react';
+import { SecureLend } from '@securelend/sdk';
+
+interface LoanOffer {
+  offerId: string;
+  lenderName: string;
+  interestRate: number;
+  monthlyPayment: number;
+  termMonths: number;
+}
+
+export default function LoanComparison() {
+  const [amount, setAmount] = useState(200000);
+  const [purpose, setPurpose] = useState('equipment');
+  const [offers, setOffers] = useState<LoanOffer[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const compareLoans = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const securelend = new SecureLend();
+
+      const result = await securelend.compareBusinessLoans({
+        loanAmount: amount,
+        purpose
+      });
+
+      setOffers(result.offers);
+    } catch (err) {
+      setError('Failed to compare loans. Please try again.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Compare Business Loans</h2>
+
+      <div className="mb-4 space-y-4">
+        <div>
+          <label className="block mb-2">Loan Amount</label>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(Number(e.target.value))}
+            className="border rounded px-4 py-2 w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-2">Purpose</label>
+          <select
+            value={purpose}
+            onChange={(e) => setPurpose(e.target.value)}
+            className="border rounded px-4 py-2 w-full"
+          >
+            <option value="equipment">Equipment</option>
+            <option value="working_capital">Working Capital</option>
+            <option value="expansion">Expansion</option>
+          </select>
+        </div>
+
+        <button
+          onClick={compareLoans}
+          disabled={loading}
+          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
+        >
+          {loading ? 'Comparing...' : 'Compare Loans'}
+        </button>
+      </div>
+
+      {error && (
+        <div className="bg-red-100 text-red-700 p-4 rounded mb-4">
+          {error}
+        </div>
+      )}
+
+      {offers.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">
+            Found {offers.length} Offers
+          </h3>
+
+          {offers.map(offer => (
+            <div key={offer.offerId} className="border rounded p-4">
+              <h4 className="font-semibold">{offer.lenderName}</h4>
+              <p className="text-2xl text-blue-600">{offer.interestRate}% APR</p>
+              <p className="text-gray-600">
+                ${offer.monthlyPayment.toLocaleString()}/month
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+---
+
+## Advanced Patterns
+
+### Comparison Across Multiple Loan Types
+
+```typescript
+import { SecureLend } from "@securelend/sdk";
+
+async function compareAllFinancingOptions() {
+  const securelend = new SecureLend();
+
+  // Compare multiple product types in parallel
+  const [loans, creditCards, banking] = await Promise.all([
+    securelend.compareBusinessLoans({
+      loanAmount: 100000,
+      purpose: "working_capital",
+      annualRevenue: 500000,
+    }),
+    securelend.compareBusinessCreditCards({
+      annualRevenue: 500000,
+      creditScore: 720,
+    }),
+    securelend.compareBusinessBanking({
+      monthlyTransactions: 200,
+    }),
+  ]);
+
+  return {
+    loans: loans.offers,
+    creditCards: creditCards.offers,
+    banking: banking.offers,
+  };
+}
+
+// Usage
+const options = await compareAllFinancingOptions();
+console.log(
+  `Found ${options.loans.length} loans, ${options.creditCards.length} cards`,
+);
+```
+
+### Rate Monitoring Service
+
+```typescript
+import { SecureLend } from "@securelend/sdk";
+
+class RateMonitor {
+  private securelend: SecureLend;
+  private targetRate: number;
+  private checkInterval: number;
+
+  constructor(targetRate: number, checkIntervalMs: number = 3600000) {
+    this.securelend = new SecureLend();
+    this.targetRate = targetRate;
+    this.checkInterval = checkIntervalMs;
+  }
+
+  async checkRates() {
+    const result = await this.securelend.comparePersonalLoans({
+      loanAmount: 25000,
+      purpose: "debt_consolidation",
+      creditScore: 720,
+    });
+
+    const bestRate = Math.min(...result.offers.map((o) => o.interestRate));
+
+    if (bestRate <= this.targetRate) {
+      await this.sendAlert({
+        rate: bestRate,
+        offers: result.offers.filter((o) => o.interestRate === bestRate),
+      });
+    }
+
+    return bestRate;
+  }
+
+  start() {
+    console.log(`Starting rate monitor (target: ${this.targetRate}%)`);
+
+    // Check immediately
+    this.checkRates();
+
+    // Then check periodically
+    setInterval(() => this.checkRates(), this.checkInterval);
+  }
+
+  private async sendAlert(data: { rate: number; offers: any[] }) {
+    console.log(`🎉 Target rate reached: ${data.rate}%`);
+    console.log(
+      `Available from: ${data.offers.map((o) => o.lenderName).join(", ")}`,
+    );
+
+    // Send email, Slack notification, etc.
+  }
+}
+
+// Monitor for rates under 9%
+const monitor = new RateMonitor(9.0, 3600000); // Check every hour
+monitor.start();
+```
+
+### Batch Processing
+
+```typescript
+import { SecureLend } from "@securelend/sdk";
+
+interface BusinessProfile {
+  id: string;
+  name: string;
+  revenue: number;
+  industry: string;
+  loanAmount: number;
+}
+
+async function batchProcessLoans(businesses: BusinessProfile[]) {
+  const securelend = new SecureLend();
+
+  const results = await Promise.allSettled(
+    businesses.map((business) =>
+      securelend
+        .compareBusinessLoans({
+          loanAmount: business.loanAmount,
+          purpose: "working_capital",
+          annualRevenue: business.revenue,
+          industry: business.industry,
+        })
+        .then((result) => ({
+          businessId: business.id,
+          businessName: business.name,
+          success: true,
+          offers: result.offers,
+        }))
+        .catch((error) => ({
+          businessId: business.id,
+          businessName: business.name,
+          success: false,
+          error: error.message,
+        })),
+    ),
+  );
+
+  const successful = results.filter((r) => r.status === "fulfilled");
+  const failed = results.filter((r) => r.status === "rejected");
+
+  console.log(`Processed ${businesses.length} businesses`);
+  console.log(`Success: ${successful.length}, Failed: ${failed.length}`);
+
+  return results.map((r) => (r.status === "fulfilled" ? r.value : null));
+}
+
+// Usage
+const businesses = [
+  {
+    id: "1",
+    name: "Tech Co",
+    revenue: 1000000,
+    industry: "technology",
+    loanAmount: 200000,
+  },
+  {
+    id: "2",
+    name: "Retail Co",
+    revenue: 500000,
+    industry: "retail",
+    loanAmount: 100000,
+  },
+  {
+    id: "3",
+    name: "Restaurant",
+    revenue: 300000,
+    industry: "restaurant",
+    loanAmount: 50000,
+  },
+];
+
+const results = await batchProcessLoans(businesses);
+```
+
+### Caching Results
+
+```typescript
+import { SecureLend } from "@securelend/sdk";
+
+class LoanComparisonCache {
+  private cache: Map<string, { data: any; timestamp: number }>;
+  private ttl: number; // Time to live in milliseconds
+  private securelend: SecureLend;
+
+  constructor(ttlMinutes: number = 15) {
+    this.cache = new Map();
+    this.ttl = ttlMinutes * 60 * 1000;
+    this.securelend = new SecureLend();
+  }
+
+  private getCacheKey(params: any): string {
+    return JSON.stringify(params);
+  }
+
+  private isValid(timestamp: number): boolean {
+    return Date.now() - timestamp < this.ttl;
+  }
+
+  async compareLoans(params: {
+    loanAmount: number;
+    purpose: string;
+    annualRevenue?: number;
+  }) {
+    const key = this.getCacheKey(params);
+    const cached = this.cache.get(key);
+
+    // Return cached if valid
+    if (cached && this.isValid(cached.timestamp)) {
+      console.log("Cache hit");
+      return cached.data;
+    }
+
+    // Fetch fresh data
+    console.log("Cache miss - fetching fresh data");
+    const result = await this.securelend.compareBusinessLoans(params);
+
+    // Cache the result
+    this.cache.set(key, {
+      data: result,
+      timestamp: Date.now(),
+    });
+
+    return result;
+  }
+
+  clearCache() {
+    this.cache.clear();
+  }
+}
+
+// Usage
+const cache = new LoanComparisonCache(15); // 15 minute cache
+
+const result1 = await cache.compareLoans({
+  loanAmount: 200000,
+  purpose: "equipment",
+}); // Fetches from API
+
+const result2 = await cache.compareLoans({
+  loanAmount: 200000,
+  purpose: "equipment",
+}); // Returns from cache
+```
+
+---
+
+## Error Handling Patterns
+
+### Retry with Exponential Backoff
+
+```typescript
+import { SecureLend, SecureLendError } from "@securelend/sdk";
+
+async function compareLoansWithRetry(params: any, maxRetries: number = 3) {
+  const securelend = new SecureLend();
+  let lastError: Error;
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await securelend.compareBusinessLoans(params);
+    } catch (error) {
+      lastError = error as Error;
+
+      if (error instanceof SecureLendError) {
+        // Don't retry on validation errors
+        if (error.code === "INVALID_PARAMETER") {
+          throw error;
+        }
+
+        // Retry on rate limits or service issues
+        if (
+          error.code === "RATE_LIMIT_EXCEEDED" ||
+          error.code === "SERVICE_UNAVAILABLE"
+        ) {
+          const delay = Math.pow(2, attempt) * 1000; // Exponential backoff
+          console.log(`Retry attempt ${attempt + 1} after ${delay}ms`);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+      }
+
+      throw error;
+    }
+  }
+
+  throw new Error(`Failed after ${maxRetries} retries: ${lastError.message}`);
+}
+
+// Usage
+try {
+  const result = await compareLoansWithRetry({
+    loanAmount: 200000,
+    purpose: "equipment",
+  });
+} catch (error) {
+  console.error("All retries failed:", error);
+}
+```
+
+### Graceful Degradation
+
+```typescript
+import { SecureLend, SecureLendError } from "@securelend/sdk";
+
+async function getLoansWithFallback(params: any) {
+  const securelend = new SecureLend();
+
+  try {
+    return await securelend.compareBusinessLoans(params);
+  } catch (error) {
+    console.error("Primary API failed:", error);
+
+    if (error instanceof SecureLendError) {
+      // Return cached results or estimated ranges
+      return {
+        offers: [],
+        error: error.message,
+        fallback: true,
+        estimatedRange: {
+          minRate: 7.5,
+          maxRate: 12.0,
+          message:
+            "Showing estimated rates. Try again later for real-time offers.",
+        },
+      };
+    }
+
+    throw error;
+  }
+}
+```
+
+### Validation Before API Call
+
+```typescript
+import { SecureLend } from "@securelend/sdk";
+
+interface ValidationError {
+  field: string;
+  message: string;
+}
+
+function validateBusinessLoanRequest(params: any): ValidationError[] {
+  const errors: ValidationError[] = [];
+
+  if (!params.loanAmount) {
+    errors.push({ field: "loanAmount", message: "Loan amount is required" });
+  } else if (params.loanAmount < 1000) {
+    errors.push({
+      field: "loanAmount",
+      message: "Minimum loan amount is $1,000",
+    });
+  } else if (params.loanAmount > 5000000) {
+    errors.push({
+      field: "loanAmount",
+      message: "Maximum loan amount is $5,000,000",
+    });
+  }
+
+  if (!params.purpose) {
+    errors.push({ field: "purpose", message: "Loan purpose is required" });
+  }
+
+  if (
+    params.creditScore &&
+    (params.creditScore < 300 || params.creditScore > 850)
+  ) {
+    errors.push({
+      field: "creditScore",
+      message: "Credit score must be between 300-850",
+    });
+  }
+
+  return errors;
+}
+
+async function compareLoansWithValidation(params: any) {
+  // Validate first
+  const errors = validateBusinessLoanRequest(params);
+  if (errors.length > 0) {
+    throw new Error(`Validation failed: ${JSON.stringify(errors)}`);
+  }
+
+  // Then call API
+  const securelend = new SecureLend();
+  return await securelend.compareBusinessLoans(params);
+}
+```
+
+---
+
+## Testing Examples
+
+### Unit Tests with Jest
+
+```typescript
+// __tests__/loans.test.ts
+import { SecureLend } from "@securelend/sdk";
+
+describe("SecureLend SDK", () => {
+  let securelend: SecureLend;
+
+  beforeEach(() => {
+    securelend = new SecureLend();
+  });
+
+  describe("compareBusinessLoans", () => {
+    it("should return loan offers", async () => {
+      const result = await securelend.compareBusinessLoans({
+        loanAmount: 200000,
+        purpose: "equipment",
+      });
+
+      expect(result).toHaveProperty("offers");
+      expect(Array.isArray(result.offers)).toBe(true);
+      expect(result.offers.length).toBeGreaterThan(0);
+    });
+
+    it("should include required offer fields", async () => {
+      const result = await securelend.compareBusinessLoans({
+        loanAmount: 200000,
+        purpose: "equipment",
+      });
+
+      const offer = result.offers[0];
+      expect(offer).toHaveProperty("lenderName");
+      expect(offer).toHaveProperty("interestRate");
+      expect(offer).toHaveProperty("monthlyPayment");
+      expect(offer).toHaveProperty("termMonths");
+    });
+
+    it("should handle errors gracefully", async () => {
+      await expect(
+        securelend.compareBusinessLoans({
+          loanAmount: -1000, // Invalid amount
+          purpose: "equipment",
+        }),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("calculateLoanPayment", () => {
+    it("should calculate correct payment", async () => {
+      const result = await securelend.calculateLoanPayment({
+        loanAmount: 100000,
+        interestRate: 6.0,
+        loanTermInMonths: 60,
+      });
+
+      expect(result.monthlyPayment).toBeCloseTo(1933.28, 2);
+    });
+  });
 });
 ```
-To run this example:
-1. Save the code as `server.js`.
-2. Run `npm install express @securelend/sdk`.
-3. Set your API key: `export SECURELEND_API_KEY='your_key_here'`.
-4. Start the server: `node server.js`.
-5. Send a POST request to `http://localhost:3000/get-offers` with a JSON body.
+
+### Integration Tests
+
+```typescript
+// __tests__/integration.test.ts
+import { SecureLend } from "@securelend/sdk";
+
+describe("SecureLend Integration", () => {
+  it("should complete full loan comparison flow", async () => {
+    const securelend = new SecureLend();
+
+    // 1. Compare loans
+    const comparison = await securelend.compareBusinessLoans({
+      loanAmount: 200000,
+      purpose: "equipment",
+      annualRevenue: 1000000,
+    });
+
+    expect(comparison.offers.length).toBeGreaterThan(0);
+
+    // 2. Calculate payment for best offer
+    const bestOffer = comparison.offers[0];
+    const payment = await securelend.calculateLoanPayment({
+      loanAmount: bestOffer.loanAmount,
+      interestRate: bestOffer.interestRate,
+      loanTermInMonths: bestOffer.termMonths,
+    });
+
+    expect(payment.monthlyPayment).toBeCloseTo(bestOffer.monthlyPayment, 0);
+  });
+});
+```
+
+---
+
+## Production Deployment
+
+### Environment Configuration
+
+```typescript
+// lib/securelend.ts
+import { SecureLend } from "@securelend/sdk";
+
+const getSecureLendClient = () => {
+  const config = {
+    serverUrl:
+      process.env.SECURELEND_SERVER_URL || "https://mcp.securelend.ai/mcp",
+    timeout: parseInt(process.env.SECURELEND_TIMEOUT || "10000"),
+    retries: parseInt(process.env.SECURELEND_RETRIES || "2"),
+  };
+
+  return new SecureLend(config);
+};
+
+export default getSecureLendClient;
+```
+
+### Logging and Monitoring
+
+```typescript
+import { SecureLend, SecureLendError } from "@securelend/sdk";
+
+async function compareLoansWithLogging(params: any) {
+  const securelend = new SecureLend();
+  const startTime = Date.now();
+
+  try {
+    console.log("Starting loan comparison", { params });
+
+    const result = await securelend.compareBusinessLoans(params);
+
+    const duration = Date.now() - startTime;
+    console.log("Loan comparison successful", {
+      duration,
+      offerCount: result.offers.length,
+    });
+
+    // Send metrics to monitoring service
+    await trackMetric("loan_comparison_success", {
+      duration,
+      offerCount: result.offers.length,
+    });
+
+    return result;
+  } catch (error) {
+    const duration = Date.now() - startTime;
+
+    if (error instanceof SecureLendError) {
+      console.error("Loan comparison failed", {
+        code: error.code,
+        message: error.message,
+        duration,
+      });
+
+      // Send error to monitoring
+      await trackError("loan_comparison_error", {
+        code: error.code,
+        duration,
+      });
+    }
+
+    throw error;
+  }
+}
+
+async function trackMetric(name: string, data: any) {
+  // Send to your monitoring service (DataDog, New Relic, etc.)
+}
+
+async function trackError(name: string, data: any) {
+  // Send to your error tracking service (Sentry, etc.)
+}
+```
+
+---
+
+## Performance Optimization
+
+### Request Deduplication
+
+```typescript
+import { SecureLend } from "@securelend/sdk";
+
+class LoanComparison {
+  private securelend: SecureLend;
+  private pendingRequests: Map<string, Promise<any>>;
+
+  constructor() {
+    this.securelend = new SecureLend();
+    this.pendingRequests = new Map();
+  }
+
+  async compare(params: any) {
+    const key = JSON.stringify(params);
+
+    // Return existing pending request if duplicate
+    if (this.pendingRequests.has(key)) {
+      console.log("Deduplicating request");
+      return this.pendingRequests.get(key);
+    }
+
+    // Create new request
+    const promise = this.securelend.compareBusinessLoans(params).finally(() => {
+      // Clean up when done
+      this.pendingRequests.delete(key);
+    });
+
+    this.pendingRequests.set(key, promise);
+    return promise;
+  }
+}
+
+const comparison = new LoanComparison();
+
+// These will only make one API call
+const [result1, result2, result3] = await Promise.all([
+  comparison.compare({ loanAmount: 200000, purpose: "equipment" }),
+  comparison.compare({ loanAmount: 200000, purpose: "equipment" }),
+  comparison.compare({ loanAmount: 200000, purpose: "equipment" }),
+]);
+```
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="SDK Overview" icon="book" href="/sdk/overview">
+    Learn about SDK features
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/sdk/javascript">
+    Complete API documentation
+  </Card>
+
+  <Card title="Tool Reference" icon="tools" href="/mcp/tools">
+    All 20 tools documented
+  </Card>
+
+  <Card
+    title="GitHub Repository"
+    icon="github"
+    href="https://github.com/SecureLend/sdk"
+  >
+    View source and contribute
+  </Card>
+</CardGroup>
+
+## Need Help?
+
+- **Email:** developers@securelend.ai
+- **GitHub Issues:** [SecureLend/sdk/issues](https://github.com/SecureLend/sdk/issues)
+- **Documentation:** [docs.securelend.ai](https://docs.securelend.ai)
+- **Status:** [status.securelend.ai](https://status.securelend.ai)
