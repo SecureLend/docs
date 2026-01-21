@@ -13,26 +13,16 @@
       },
       {
         "group": "Platform",
-        "pages": [
-          "platform/overview",
-          "platform/concepts"
-        ]
+        "pages": ["platform/overview", "platform/concepts"]
       },
       {
         "group": "Platform (Advanced)",
         "protected": true,
-        "pages": [
-          "platform/environments",
-          "platform/security"
-        ]
+        "pages": ["platform/environments", "platform/security"]
       },
       {
         "group": "SDKs",
-        "pages": [
-          "sdk/overview",
-          "sdk/javascript",
-          "sdk/examples"
-        ]
+        "pages": ["sdk/overview", "sdk/javascript", "sdk/examples"]
       },
       {
         "group": "MCP Integrations",
@@ -40,21 +30,17 @@
         "pages": [
           "mcp/overview",
           "mcp/setup",
+          "mcp/tools",
           "mcp/financial-services"
         ]
       },
       {
         "group": "APIs",
-        "pages": [
-          "api/loans",
-          "api/webhooks"
-        ]
+        "pages": ["api/loans", "api/webhooks"]
       },
       {
         "group": "Guides",
-        "pages": [
-          "guides/errors"
-        ]
+        "pages": ["guides/errors"]
       }
     ]
   }

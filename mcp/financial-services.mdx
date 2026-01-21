@@ -1,5 +1,646 @@
 ---
-title: Financial Services
+title: "Financial Services Examples"
+description: "Real-world examples of using SecureLend MCP tools"
 ---
 
-> This documentation is available to SecureLend customers and partners.
+# Financial Services Examples
+
+Real conversations showing how to use SecureLend's MCP tools for financial comparisons and applications.
+
+---
+
+## Business Financing
+
+### Equipment Loan for Restaurant
+
+```text
+User: I need to finance new kitchen equipment for my restaurant.
+      I'm looking at around $200,000. My business has been
+      operating for 3 years with about $1.2M in annual revenue.
+      My personal credit score is 720. What are my options?
+
+Claude: [Uses compare_business_loans tool]
+
+Based on your business profile, I found 5 competitive equipment
+loan offers:
+
+**Top Recommendations:**
+
+1. **ABC Business Capital - Equipment Financing**
+   - Interest Rate: 7.5% APR
+   - Monthly Payment: $3,200
+   - Term: 60 months
+   - Total Cost: $192,000 (principal + interest: $42,000)
+   - Origination Fee: None
+   - Approval Likelihood: 85%
+   - Key Features:
+     • No prepayment penalty
+     • Equipment serves as collateral
+     • Flexible payment options
+
+2. **SmallBiz Lending - Term Loan**
+   - Interest Rate: 8.2% APR
+   - Monthly Payment: $3,350
+   - Term: 60 months
+   - Total Cost: $201,000 (principal + interest: $51,000)
+   - Origination Fee: 2% ($4,000)
+   - Approval Likelihood: 90%
+   - Key Features:
+     • Fast approval (24-48 hours)
+     • No collateral required
+     • Revenue-based underwriting
+
+3. **Regional Bank - SBA 7(a) Loan**
+   - Interest Rate: 7.0% APR (SBA Prime + 2%)
+   - Monthly Payment: $3,089
+   - Term: 84 months (7 years)
+   - Total Cost: $259,476 (principal + interest: $59,476)
+   - Origination Fee: 3% ($6,000)
+   - Approval Likelihood: 75%
+   - Key Features:
+     • Government guaranteed
+     • Longer terms available
+     • Can be used for working capital too
+
+Your business profile is strong with 3 years of operating history
+and $1.2M revenue. The 720 credit score qualifies you for
+competitive rates.
+
+Would you like me to help you submit applications to any of
+these lenders, or would you like to see more options?
+```
+
+---
+
+### Working Capital Line of Credit
+
+```text
+User: My retail business needs access to working capital for
+      seasonal inventory. We do about $800K in annual sales.
+      What line of credit options do we have?
+
+Claude: [Uses compare_business_loans tool with purpose: working_capital]
+
+For your retail business, I found several line of credit options
+that provide flexible access to working capital:
+
+**Recommended Lines of Credit:**
+
+1. **Business Credit Line - Regional Bank**
+   - Credit Limit: $100,000
+   - Interest Rate: Prime + 3% (currently 11.5%)
+   - Draw Period: 24 months
+   - Repayment Period: 12 months
+   - Annual Fee: $250
+   - Requirements:
+     • 2+ years in business ✓
+     • $500K+ revenue ✓
+     • Personal guarantee required
+
+2. **Revolving Credit - Online Lender**
+   - Credit Limit: $75,000
+   - Interest Rate: 14.9% APR
+   - Draw Period: 18 months
+   - Repayment: Flexible
+   - Annual Fee: $0
+   - Requirements:
+     • 1+ years in business ✓
+     • $250K+ revenue ✓
+     • Fast approval (same day)
+
+These lines of credit allow you to:
+- Draw funds as needed for inventory
+- Pay interest only on what you use
+- Reuse the credit as you repay
+- Handle seasonal cash flow gaps
+
+The revolving structure is ideal for retail businesses with
+seasonal inventory needs. Would you like details on the
+application process?
+```
+
+---
+
+## Personal Financing
+
+### Debt Consolidation
+
+```text
+User: I have about $25,000 in credit card debt across 4 cards
+      with rates ranging from 18% to 24%. My credit score is 720.
+      Would it make sense to consolidate with a personal loan?
+
+Claude: [Uses compare_personal_loans tool]
+
+Yes, consolidating makes sense. Here's what I found:
+
+**Current Situation:**
+- Total Debt: $25,000
+- Average Interest Rate: ~21%
+- Estimated Monthly Payment: $800+
+- Total Interest (3 years): ~$8,400
+
+**Personal Loan Options:**
+
+1. **SoFi Personal Loan**
+   - Amount: $25,000
+   - Interest Rate: 9.99% APR
+   - Term: 60 months (5 years)
+   - Monthly Payment: $528
+   - Total Interest: $6,680
+   - Origination Fee: None
+   - **Savings vs Credit Cards: $1,720**
+
+2. **LightStream Personal Loan**
+   - Amount: $25,000
+   - Interest Rate: 10.49% APR
+   - Term: 60 months
+   - Monthly Payment: $535
+   - Total Interest: $7,100
+   - Origination Fee: None
+   - Rate discount: 0.50% with autopay
+   - **Savings vs Credit Cards: $1,300**
+
+3. **Marcus by Goldman Sachs**
+   - Amount: $25,000
+   - Interest Rate: 11.99% APR
+   - Term: 60 months
+   - Monthly Payment: $556
+   - Total Interest: $8,360
+   - Origination Fee: None
+   - No prepayment penalty
+
+**Analysis:**
+With your 720 credit score, you qualify for rates around 10-12%,
+which is MUCH better than your current 18-24% credit card rates.
+
+**Benefits of Consolidation:**
+✓ Single monthly payment instead of 4
+✓ Fixed rate (credit cards are variable)
+✓ Clear payoff date
+✓ Save $1,300-$1,720 in interest
+✓ Improve credit utilization ratio
+
+**Things to Consider:**
+- Longer term means more total interest IF you pay minimum
+- Need discipline not to accumulate new credit card debt
+- Fixed monthly payment (less flexibility than credit cards)
+
+Would you like me to help you apply to any of these lenders?
+```
+
+---
+
+### Home Improvement Loan
+
+```text
+User: We want to renovate our kitchen and add a bathroom.
+      We're looking at about $45,000 total. We own our home
+      (worth about $500K with $200K mortgage remaining).
+      Credit score is 740. What's the best way to finance this?
+
+Claude: Let me compare your options:
+        [Uses compare_personal_loans tool]
+        [Uses compare_personal_mortgages with refinance]
+
+You have 3 main financing options:
+
+**Option 1: Home Equity Line of Credit (HELOC)**
+- Credit Limit: Up to $120,000 available
+  (80% LTV: $400K - $200K mortgage = $200K available)
+- Interest Rate: Prime + 1% (currently ~9.5%)
+- Interest on $45K: ~$4,275/year
+- Monthly Payment: Interest-only during draw period
+- Term: 10-year draw, 20-year repayment
+- Tax Advantages: Interest may be tax-deductible
+
+**Option 2: Personal Loan**
+Best rates with your 740 credit:
+- SoFi: 10.99% APR, $987/month (60 months)
+- Total Interest: $14,220
+- No collateral required
+- Fixed rate and payment
+- Faster approval
+
+**Option 3: Cash-Out Refinance**
+- New Mortgage: $245,000 ($200K + $45K)
+- Current Rate: ~6.75%
+- Monthly P&I: $1,590 (30-year)
+- Makes sense IF:
+  • Can get lower rate than current mortgage
+  • Want single payment
+  • Planning to stay in home 5+ years
+
+**Recommendation:**
+For $45K home improvement with your profile:
+1. **HELOC** is most flexible and often tax-advantaged
+2. **Personal Loan** if you want fixed payments and no home equity risk
+3. **Refinance** only if your current mortgage rate is high
+
+The HELOC gives you the lowest rate (~9.5%) and tax advantages,
+but uses your home as collateral. The personal loan is simpler
+but costs more (~11% rate).
+
+Which option sounds most appealing to you?
+```
+
+---
+
+## Mortgage & Real Estate
+
+### First-Time Home Buyer
+
+```text
+User: We're first-time home buyers looking at a $400,000 house.
+      We've saved $60,000 for down payment. Combined credit
+      score is 720. What would our monthly payment be?
+
+Claude: [Uses calculate_mortgage_payment tool]
+
+Great position for first-time buyers! Here's your breakdown:
+
+**Loan Details:**
+- Home Price: $400,000
+- Down Payment: $60,000 (15%)
+- Loan Amount: $340,000
+
+**Option 1: Conventional Loan (15% down)**
+- Interest Rate: ~6.75%
+- Monthly Payment: $2,733
+  • Principal & Interest: $2,205
+  • Property Tax (1.2%): $400
+  • Home Insurance: $125
+  • PMI (until 20% equity): $203
+
+- Total Monthly: $2,733
+- PMI drops off at: ~$355K paid (3-4 years)
+- Then monthly drops to: $2,530
+
+**Option 2: FHA Loan (15% down)**
+- Interest Rate: ~6.5% (slightly lower)
+- Monthly Payment: $2,798
+  • Principal & Interest: $2,149
+  • Property Tax: $400
+  • Home Insurance: $125
+  • MIP (mortgage insurance): $124
+
+- Total Monthly: $2,798
+- MIP stays for loan life with <10% down
+- Note: FHA allows as low as 3.5% down
+
+**Option 3: Save More for 20% Down ($80,000)**
+- Interest Rate: ~6.5%
+- Monthly Payment: $2,425
+  • Principal & Interest: $2,025
+  • Property Tax: $400
+  • Home Insurance: $125
+  • No PMI ✓
+
+- Total Monthly: $2,425
+- Save $300+/month vs 15% down
+
+**My Recommendation:**
+With $60K saved (15% down), you'll pay PMI but can buy now.
+If you can wait 6-12 months to save $20K more for 20% down:
+- Save ~$300/month by avoiding PMI
+- Get better interest rates
+- Lower monthly payment
+
+Alternative: Put 15% down now, make extra payments to reach
+20% equity faster and drop PMI in 2-3 years instead of waiting
+to buy.
+
+Would you like me to compare specific lenders for either
+scenario?
+```
+
+---
+
+### Investment Property Analysis
+
+```text
+User: I'm considering buying a duplex for $350,000 as an
+      investment property. I'd live in one unit and rent the
+      other for about $1,800/month. What would the numbers
+      look like?
+
+Claude: [Uses calculate_mortgage_payment tool]
+        [Uses compare_personal_mortgages with propertyType: investment]
+
+Here's the analysis for your house-hacking strategy:
+
+**Purchase Details:**
+- Property Price: $350,000
+- Down Payment (20% for investment): $70,000
+- Loan Amount: $280,000
+
+**Monthly Payment Breakdown:**
+- Principal & Interest (6.75%): $1,816
+- Property Tax (1.2%): $350
+- Insurance (higher for rental): $200
+- HOA/Maintenance Reserve: $150
+**Total Monthly: $2,516**
+
+**Income:**
+- Rental Income: $1,800/month
+
+**Net Housing Cost:**
+- Your Effective Payment: $716/month
+  ($2,516 total - $1,800 rent collected)
+
+**Analysis:**
+This is a strong house-hacking opportunity:
+
+✓ You live for only $716/month
+✓ Tenant covers 72% of your housing cost
+✓ Build equity while living affordably
+✓ Can convert to full rental later
+✓ Tax benefits: depreciation on rental half
+
+**Investment Return (if you moved out):**
+- Both Units Rented: $3,600/month
+- Expenses: $2,516
+- Cash Flow: $1,084/month = $13,008/year
+- Cash-on-Cash Return: 18.6% on $70K down
+
+**Considerations:**
+- 20% down required for investment property
+- Higher interest rates than primary residence
+- Need reserves for vacancies and repairs
+- Being a landlord responsibilities
+
+This is much better than renting yourself while building long-term
+wealth. Would you like me to help you compare mortgage lenders
+for investment properties?
+```
+
+---
+
+## Auto Financing
+
+### New Car Purchase
+
+```text
+User: I'm buying a new Tesla Model 3 for $42,000. I can put
+      down $10,000. My credit score is 780. What are the best
+      financing options?
+
+Claude: [Uses compare_car_loans tool]
+
+Excellent credit score! Here are your best options:
+
+**Auto Loan Options:**
+
+1. **Credit Union Auto Loan**
+   - Amount: $32,000
+   - Interest Rate: 5.49% APR
+   - Term: 60 months
+   - Monthly Payment: $609
+   - Total Interest: $4,540
+
+2. **Tesla Financing**
+   - Amount: $32,000
+   - Interest Rate: 5.99% APR
+   - Term: 72 months
+   - Monthly Payment: $517
+   - Total Interest: $5,224
+   - Convenient (one-stop shopping)
+
+3. **Bank Auto Loan**
+   - Amount: $32,000
+   - Interest Rate: 5.74% APR
+   - Term: 60 months
+   - Monthly Payment: $614
+   - Total Interest: $4,840
+
+**Tesla Incentive:**
+- 0.99% APR available for 36 months
+- Monthly Payment: $920
+- Total Interest: $997
+- **Best deal if you can afford higher payment**
+
+**Analysis:**
+
+If you can afford $920/month:
+→ Take Tesla's 0.99% for 36 months
+→ Save $3,500+ in interest vs 60-month loans
+→ Own car outright 2 years sooner
+
+If you need lower payments:
+→ Credit Union at 5.49% for 60 months ($609)
+→ Refinance after 1-2 years if rates drop
+
+**Recommendation:**
+The 0.99% promotional rate is exceptional. Even if tight,
+consider the 36-month option - you'll save substantially
+and build equity faster.
+
+Avoid the 72-month terms - while payments are lower ($517),
+you pay significantly more interest and risk being underwater
+if you need to sell early.
+
+Would you like me to help with the application?
+```
+
+---
+
+### Used Car Financing
+
+```text
+User: I found a 2021 Honda Accord with 30,000 miles for $24,000.
+      I have $5,000 to put down. Credit score is 680. What rates
+      can I expect?
+
+Claude: [Uses compare_car_loans tool with isNew: false]
+
+For a used car with 680 credit, here are your options:
+
+**Used Auto Loan Rates:**
+
+1. **Credit Union Used Car Loan**
+   - Amount: $19,000
+   - Interest Rate: 7.49% APR
+   - Term: 60 months
+   - Monthly Payment: $380
+   - Total Interest: $3,800
+
+2. **Online Lender (myAutoloan)**
+   - Amount: $19,000
+   - Interest Rate: 8.99% APR
+   - Term: 60 months
+   - Monthly Payment: $396
+   - Total Interest: $4,760
+   - Fast approval (same day)
+
+3. **Dealer Financing**
+   - Amount: $19,000
+   - Interest Rate: 9.49% APR
+   - Term: 72 months
+   - Monthly Payment: $324
+   - Total Interest: $4,328
+   - Convenient but higher rate
+
+**Rate Factors:**
+Your 680 credit score puts you in "good" range, but used
+cars have higher rates than new (typically 1-2% more).
+
+**Recommendation:**
+1. **Apply to credit union first** (7.49% is solid)
+2. Use that as leverage with dealer
+3. Avoid 72-month terms on used cars
+
+**Ways to Improve:**
+- Pay down to $15K borrowed → better rate tier
+- Add co-signer with 720+ score → save 1-2%
+- Wait 3-6 months, improve credit → save 0.5-1%
+
+**Quick Comparison:**
+60 months vs 72 months:
+- 60mo: $380/mo, $3,800 interest
+- 72mo: $324/mo, $4,328 interest
+- **Save $528 with shorter term**
+  (yes, pay $56 more monthly but done 1 year sooner)
+
+Would you like pre-approval from the credit union?
+```
+
+---
+
+## Student Loans
+
+### MBA Financing
+
+```text
+User: I'm starting an MBA program that costs $120,000 total
+      over 2 years. I have $20,000 saved. My credit score is
+      720, and my dad is willing to co-sign (credit score 780).
+      What are my best options?
+
+Claude: [Uses compare_student_loans tool with degreeType: mba]
+
+MBA financing with your profile:
+
+**Federal Grad PLUS Loans:**
+- Amount Available: $100,000 (up to cost of attendance)
+- Interest Rate: 8.05% (fixed)
+- No credit check required
+- Flexible repayment options
+- Loan forgiveness programs available
+
+**Private Student Loans:**
+
+1. **With Co-Signer (Dad at 780 credit):**
+   - SoFi: 6.49% - 8.99% variable
+   - CommonBond: 6.74% - 9.24% variable
+   - Amount: Up to $100,000
+   - Lower rates due to co-signer
+
+2. **Without Co-Signer (You at 720 credit):**
+   - Rates: 8.99% - 11.49%
+   - Higher rates, but you build credit
+
+**Recommended Strategy:**
+
+**Phase 1: During School (2 years)**
+- Use your $20K savings for living expenses
+- Borrow $100K total for tuition
+- Federal Grad PLUS: $80,000
+  (8.05%, better protections)
+- Private with co-signer: $20,000
+  (6.49%, lower rate)
+
+**Phase 2: After Graduation**
+- Expected MBA salary: $120K+
+- Refinance all loans at lower rate
+- Remove dad from co-signed loan
+- Typical refi rates: 5.5-7% with good income
+
+**Payment Projection:**
+$100K borrowed at 7.5% average:
+- 10-year term: $1,189/month
+- After MBA salary boost: ~12% of income
+- Very manageable with MBA earnings
+
+**Why Mix Federal & Private:**
+- Federal: Safety net (forbearance, income-driven plans)
+- Private: Lower rate with co-signer for portion
+- Flexibility to refinance later
+
+Keep $20K for living expenses rather than paying tuition
+directly - you'll need cash flow during school.
+
+Would you like me to help with applications?
+```
+
+---
+
+## Calculators in Action
+
+### Comparing Loan Terms
+
+```text
+User: I'm trying to decide between a 15-year and 30-year
+      mortgage on a $400,000 loan. How much would I save
+      with the 15-year?
+
+Claude: [Uses calculate_mortgage_payment tool twice]
+
+Let me calculate both options:
+
+**30-Year Mortgage:**
+- Interest Rate: 6.5%
+- Monthly P&I: $2,528
+- Total Interest: $509,808
+- Total Paid: $909,808
+
+**15-Year Mortgage:**
+- Interest Rate: 5.875% (lower rate)
+- Monthly P&I: $3,346
+- Total Interest: $202,280
+- Total Paid: $602,280
+
+**Comparison:**
+- Monthly Difference: $818 more for 15-year
+- Interest Saved: $307,528 (!!!)
+- Equity Building: 2x faster with 15-year
+
+**Break-Even Analysis:**
+If you took the 30-year and invested the $818/month
+difference for 15 years at 7% return:
+- Investment Value: ~$220,000
+- Still save ~$87,000+ with 15-year mortgage
+
+**Recommendation:**
+If you can afford the $3,346/month:
+→ Take 15-year, save $307K
+
+If the payment is tight:
+→ Take 30-year BUT make extra principal payments
+→ You can pay it off in 15-20 years and save $200K+
+→ Keep flexibility for tough months
+
+The 15-year saves dramatically but requires commitment
+to higher payment. The 30-year with extra payments gives
+flexibility while still saving substantially.
+
+Which aligns better with your budget and goals?
+```
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Setup Guide" icon="rocket" href="/mcp/setup">
+    Connect Claude or ChatGPT
+  </Card>
+  <Card title="Tool Reference" icon="book" href="/mcp/tools">
+    Full tool documentation
+  </Card>
+  <Card title="TypeScript SDK" icon="code" href="/sdk/javascript">
+    Programmatic integration
+  </Card>
+  <Card title="Support" icon="life-ring" href="mailto:developers@securelend.ai">
+    Get help from our team
+  </Card>
+</CardGroup>

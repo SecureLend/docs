@@ -1,0 +1,700 @@
+---
+title: "MCP Tools Reference"
+description: "Complete reference for all 20 SecureLend MCP tools"
+---
+
+# MCP Tools Reference
+
+SecureLend provides 20 tools through Model Context Protocol for financial product comparison and application management.
+
+**Server URL:** `https://mcp.securelend.ai/mcp`
+
+<Info>
+  All comparison tools are read-only and require no authentication. Application
+  submission tools require user consent.
+</Info>
+
+---
+
+## Loan Comparison Tools
+
+### compare_personal_loans
+
+Compare personal loan offers based on amount, credit score, and purpose.
+
+<ParamField path="loanAmount" type="number" required>
+  Desired loan amount in USD. Range: $1,000 - $100,000 Example: `25000` for
+  $25,000
+</ParamField>
+
+<ParamField path="purpose" type="enum" required>
+  Purpose of the loan Options: - `debt_consolidation` - Consolidate credit card
+  or other debt - `home_improvement` - Home repairs or renovations -
+  `major_purchase` - Large purchases (appliances, furniture, etc.) - `medical` -
+  Medical expenses - `vacation` - Travel and vacation expenses - `other` - Other
+  purposes
+</ParamField>
+
+<ParamField path="creditScore" type="number">
+  Applicant's credit score. Range: 300-850 Example: `720`
+</ParamField>
+
+<ParamField path="employmentStatus" type="enum">
+  Employment status Options: `employed`, `self_employed`, `retired`,
+  `unemployed`
+</ParamField>
+
+<ParamField path="monthlyIncome" type="number">
+  Gross monthly income in USD Example: `5000`
+</ParamField>
+
+<ParamField path="state" type="string">
+  State of residence (2-letter code) Example: `CA`, `NY`, `TX`
+</ParamField>
+
+**Example Query:**
+
+```
+Compare personal loans for $25,000 for debt consolidation
+with a 720 credit score in California.
+```
+
+**Response:** Array of loan offers with interest rates, monthly payments, terms, and lender details.
+
+---
+
+### compare_business_loans
+
+Compare business loan offers based on amount, revenue, and industry.
+
+<ParamField path="loanAmount" type="number" required>
+  Desired loan amount in USD. Minimum: $1,000 Example: `200000` for $200,000
+</ParamField>
+
+<ParamField path="purpose" type="string" required>
+  Reason for the loan Examples: `working capital`, `equipment`, `expansion`,
+  `inventory`, `real estate`
+</ParamField>
+
+<ParamField path="annualRevenue" type="number">
+  Business's gross annual revenue in USD Example: `1200000` for $1.2M
+</ParamField>
+
+<ParamField path="industry" type="string">
+  Industry the business operates in Examples: `technology`, `retail`,
+  `restaurant`, `construction`, `healthcare`
+</ParamField>
+
+<ParamField path="state" type="string">
+  State where business is located (2-letter code)
+</ParamField>
+
+<ParamField path="creditScore" type="number">
+  Business owner's personal credit score (300-850)
+</ParamField>
+
+**Example Query:**
+
+```
+I need a $200,000 business loan for equipment. My business
+has $1.2M annual revenue in the technology industry.
+```
+
+**Response:** Business loan offers with rates, terms, approval likelihood, and requirements.
+
+---
+
+### compare_car_loans
+
+Compare auto loan rates for new and used vehicles.
+
+<ParamField path="loanAmount" type="number" required>
+  Desired auto loan amount. Range: $1,000 - $100,000
+</ParamField>
+
+<ParamField path="isNew" type="boolean" required>
+  Whether the vehicle is new or used - `true` - New vehicle - `false` - Used
+  vehicle
+</ParamField>
+
+<ParamField path="creditScore" type="number">
+  Applicant's credit score (300-850)
+</ParamField>
+
+<ParamField path="state" type="string">
+  State of residence (2-letter code)
+</ParamField>
+
+**Example Query:**
+
+```
+Compare auto loans for a $35,000 new car with a 750 credit score.
+```
+
+---
+
+### compare_student_loans
+
+Compare student loan options by degree type and amount.
+
+<ParamField path="loanAmount" type="number" required>
+  Total loan amount needed. Range: $1,000 - $250,000
+</ParamField>
+
+<ParamField path="degreeType" type="enum" required>
+  Type of degree program Options: `undergraduate`, `graduate`, `mba`, `medical`,
+  `law`
+</ParamField>
+
+<ParamField path="creditScore" type="number">
+  Student's credit score (300-850)
+</ParamField>
+
+<ParamField path="coSignerCreditScore" type="number">
+  Co-signer's credit score, if applicable (300-850)
+</ParamField>
+
+<ParamField path="state" type="string">
+  State of residence (2-letter code)
+</ParamField>
+
+**Example Query:**
+
+```
+Compare student loans for $50,000 for an MBA program with a
+680 credit score and a co-signer with 750 credit.
+```
+
+---
+
+### compare_personal_mortgages
+
+Compare mortgage rates and terms for home purchases.
+
+<ParamField path="loanAmount" type="number" required>
+  Desired mortgage amount. Range: $50,000 - $2,000,000
+</ParamField>
+
+<ParamField path="loanType" type="enum" required>
+  Type of mortgage Options: `conventional`, `fha`, `va`, `jumbo`, `refinance`
+</ParamField>
+
+<ParamField path="homePrice" type="number">
+  Purchase price of the home. Range: $50,000 - $5,000,000
+</ParamField>
+
+<ParamField path="downPayment" type="number">
+  Down payment amount in USD
+</ParamField>
+
+<ParamField path="creditScore" type="number">
+  Applicant's credit score. Range: 500-850
+</ParamField>
+
+<ParamField path="propertyType" type="enum">
+  Intended use of property Options: `primary`, `secondary`, `investment`
+</ParamField>
+
+<ParamField path="state" type="string">
+  State where property is located
+</ParamField>
+
+**Example Query:**
+
+```
+Compare conventional mortgages for a $400,000 home with
+20% down and a 720 credit score in California.
+```
+
+---
+
+### compare_business_mortgages
+
+Compare commercial mortgage options for business properties.
+
+<ParamField path="loanAmount" type="number" required>
+  Desired commercial mortgage amount
+</ParamField>
+
+<ParamField path="loanType" type="enum" required>
+  Type of commercial mortgage Options: `conventional`, `fha`, `va`, `jumbo`,
+  `refinance`
+</ParamField>
+
+<ParamField path="homePrice" type="number">
+  Purchase price of commercial property
+</ParamField>
+
+<ParamField path="downPayment" type="number">
+  Down payment amount
+</ParamField>
+
+<ParamField path="creditScore" type="number">
+  Business owner's credit score (500-850)
+</ParamField>
+
+<ParamField path="propertyType" type="enum">
+  Property type Options: `primary`, `secondary`, `investment`
+</ParamField>
+
+<ParamField path="state" type="string">
+  State where property is located
+</ParamField>
+
+---
+
+## Banking & Credit Card Tools
+
+### compare_personal_banking
+
+Compare checking and savings account options.
+
+<ParamField path="features" type="array">
+  Desired account features Examples: `no_monthly_fees`, `high_interest`,
+  `mobile_deposit`, `atm_access`
+</ParamField>
+
+**Example Query:**
+
+```
+Compare personal checking accounts with no monthly fees
+and mobile deposit.
+```
+
+---
+
+### compare_business_banking
+
+Compare business checking and banking services.
+
+<ParamField path="industry" type="string">
+  Business industry
+</ParamField>
+
+<ParamField path="monthlyTransactions" type="number">
+  Estimated number of monthly transactions
+</ParamField>
+
+**Example Query:**
+
+```
+Compare business checking accounts for a retail business
+with about 200 transactions per month.
+```
+
+---
+
+### compare_savings_accounts
+
+Compare high-yield savings account rates.
+
+<ParamField path="initialDeposit" type="number">
+  Initial deposit amount in USD
+</ParamField>
+
+**Example Query:**
+
+```
+Compare high-yield savings accounts with a $10,000 initial deposit.
+```
+
+---
+
+### compare_personal_credit_cards
+
+Compare personal credit card offers by rewards type.
+
+<ParamField path="creditScore" type="number">
+  Applicant's credit score (300-850)
+</ParamField>
+
+<ParamField path="rewardsType" type="enum">
+  Preferred rewards type Options: `cash_back`, `travel`, `points`
+</ParamField>
+
+**Example Query:**
+
+```
+Compare cash back credit cards for someone with a 750 credit score.
+```
+
+---
+
+### compare_business_credit_cards
+
+Compare business credit card options.
+
+<ParamField path="creditScore" type="number">
+  Applicant's credit score (300-850)
+</ParamField>
+
+<ParamField path="annualRevenue" type="number">
+  Business annual revenue in USD
+</ParamField>
+
+<ParamField path="businessAgeInYears" type="number">
+  How long the business has been operating
+</ParamField>
+
+**Example Query:**
+
+```
+Compare business credit cards for a company with $1M revenue
+and 3 years in business.
+```
+
+---
+
+## Calculator Tools
+
+### calculate_loan_payment
+
+Calculate monthly payment for any loan.
+
+<ParamField path="loanAmount" type="number" required>
+  Total loan amount in USD
+</ParamField>
+
+<ParamField path="interestRate" type="number" required>
+  Annual interest rate as percentage (e.g., `5` for 5%)
+</ParamField>
+
+<ParamField path="loanTermInMonths" type="number" required>
+  Loan duration in months
+</ParamField>
+
+**Example Query:**
+
+```
+Calculate monthly payment for $200,000 at 7.5% APR over 60 months.
+```
+
+**Response:**
+
+- Monthly payment amount
+- Total interest paid
+- Total amount paid
+- Amortization details
+
+---
+
+### calculate_mortgage_payment
+
+Calculate PITI mortgage payment (Principal, Interest, Taxes, Insurance).
+
+<ParamField path="propertyValue" type="number" required>
+  Total property value in USD
+</ParamField>
+
+<ParamField path="downPayment" type="number" required>
+  Down payment amount in USD
+</ParamField>
+
+<ParamField path="interestRate" type="number" required>
+  Annual interest rate (e.g., `6.5` for 6.5%)
+</ParamField>
+
+<ParamField path="loanTermInYears" type="number" required>
+  Loan term in years (typically 15 or 30)
+</ParamField>
+
+<ParamField path="propertyTaxRate" type="number" required>
+  Annual property tax rate as percentage (e.g., `1.2` for 1.2%)
+</ParamField>
+
+<ParamField path="homeInsurance" type="number" required>
+  Annual home insurance cost in USD
+</ParamField>
+
+**Example Query:**
+
+```
+Calculate mortgage payment for $400,000 home with $80,000 down,
+6.5% interest, 30 years, 1.2% property tax, and $1,500 annual insurance.
+```
+
+**Response:**
+
+- Monthly principal & interest
+- Monthly property taxes
+- Monthly insurance
+- Total monthly PITI payment
+- Total interest over loan term
+
+---
+
+### compare_lease_vs_purchase
+
+Compare total costs of leasing vs buying a vehicle.
+
+<ParamField path="purchasePrice" type="number" required>
+  Total purchase price of vehicle
+</ParamField>
+
+<ParamField path="downPayment" type="number" required>
+  Down payment for purchase
+</ParamField>
+
+<ParamField path="interestRate" type="number" required>
+  Annual interest rate for purchase loan
+</ParamField>
+
+<ParamField path="loanTermInMonths" type="number" required>
+  Loan term in months for purchase
+</ParamField>
+
+<ParamField path="monthlyLeasePayment" type="number" required>
+  Monthly lease payment amount
+</ParamField>
+
+<ParamField path="leaseTermInMonths" type="number" required>
+  Lease term in months
+</ParamField>
+
+<ParamField path="moneyFactor" type="number" required>
+  Money factor for lease (similar to interest rate)
+</ParamField>
+
+<ParamField path="residualValuePercentage" type="number" required>
+  Estimated residual value as percentage of MSRP (0-100)
+</ParamField>
+
+<ParamField path="salesTaxRate" type="number" required>
+  Sales tax rate as percentage
+</ParamField>
+
+<ParamField path="expectedOwnershipInMonths" type="number" required>
+  How long you plan to keep the vehicle
+</ParamField>
+
+<ParamField path="acquisitionFee" type="number">
+  Lease acquisition fee (default: 0)
+</ParamField>
+
+<ParamField path="securityDeposit" type="number">
+  Lease security deposit (default: 0)
+</ParamField>
+
+**Example Query:**
+
+```
+Compare leasing vs buying a $35,000 car. Lease is $450/month for
+36 months. Purchase with $5,000 down at 6% for 60 months. I plan
+to keep it for 5 years.
+```
+
+**Response:**
+
+- Total cost of leasing
+- Total cost of purchasing
+- Cost difference
+- Recommendation based on ownership period
+
+---
+
+## Application Management Tools
+
+<Warning>
+  These tools handle sensitive user data and require explicit user consent
+  before execution.
+</Warning>
+
+### get_offer
+
+Submit loan application to a selected lender.
+
+<ParamField path="applicant" type="object" required>
+  Applicant personal details Properties: - `firstName` (required) - First name -
+  `lastName` (required) - Last name - `email` (required) - Email address -
+  `phone` (optional) - Phone number
+</ParamField>
+
+<ParamField path="applicationData" type="object" required>
+  Original loan search parameters
+</ParamField>
+
+<ParamField path="productType" type="enum" required>
+  Type of financial product Options: `INSTALLMENT_LOAN`, `MORTGAGE`,
+  `AUTO_LOAN`, `STUDENT_LOAN`, `BUSINESS_LOAN`, `PERSONAL_CREDIT_CARD`,
+  `BUSINESS_CREDIT_CARD`
+</ParamField>
+
+<ParamField path="provider" type="object" required>
+  Selected lender Properties: - `providerId` (required) - Lender ID from
+  comparison results - `providerName` (required) - Lender name
+</ParamField>
+
+**Example Usage:**
+
+```
+User confirms they want to apply to "ABC Business Capital"
+after seeing comparison results. The AI collects required
+personal information and submits the application.
+```
+
+---
+
+### get_multiple_offers
+
+Submit application to multiple lenders simultaneously.
+
+<ParamField path="applicant" type="object" required>
+  Applicant personal details (same as get_offer)
+</ParamField>
+
+<ParamField path="applicationData" type="object" required>
+  Original loan search parameters
+</ParamField>
+
+<ParamField path="productType" type="enum" required>
+  Type of financial product
+</ParamField>
+
+<ParamField path="providers" type="array" required>
+  List of selected lenders (minimum 1) Each provider object requires: -
+  `providerId` - `providerName`
+</ParamField>
+
+---
+
+### track_offer_status
+
+Check status of submitted applications.
+
+<ParamField path="applicationId" type="string">
+  Unique application ID to track
+</ParamField>
+
+<ParamField path="email" type="string">
+  Applicant's email to find all applications
+</ParamField>
+
+**Example Query:**
+
+```
+Check the status of my loan application for john@example.com
+```
+
+**Response:**
+
+- Application status (pending, approved, denied, etc.)
+- Last update timestamp
+- Next steps
+- Contact information
+
+---
+
+### display_offer_form
+
+Generate pre-filled application form for user review.
+
+<ParamField path="offerId" type="string">
+  Specific offer ID to pre-select
+</ParamField>
+
+<ParamField path="sessionId" type="string">
+  Session ID from previous search
+</ParamField>
+
+**Usage:** Retrieves cached offer details to display in a form format.
+
+---
+
+### display_upload_documents_form
+
+Present interface for uploading required documents.
+
+<ParamField path="applicationId" type="string">
+  Application ID to associate documents with
+</ParamField>
+
+**Usage:** Shows document upload interface for bank statements, tax returns, ID, etc.
+
+---
+
+### submit_documents
+
+Generate secure upload URL for application documents.
+
+<ParamField path="applicationId" type="string" required>
+  Application ID
+</ParamField>
+
+<ParamField path="documentType" type="enum" required>
+  Category of document Options: - `bank-statement` - `tax-return` -
+  `identity-document` - `proof-of-income` - `business-license` -
+  `financial-statement` - And 15+ other types
+</ParamField>
+
+<ParamField path="fileName" type="string" required>
+  Original filename
+</ParamField>
+
+**Response:** Pre-signed URL for secure file upload
+
+---
+
+## Rate Limits
+
+<Info>
+  **Comparison Tools:** 100 requests per minute per IP address **Application
+  Tools:** 10 requests per minute per email address
+</Info>
+
+Rate limits are designed to prevent abuse while allowing normal usage patterns.
+
+---
+
+## Error Handling
+
+All tools return standard error responses:
+
+```json
+{
+  "error": {
+    "code": "INVALID_PARAMETER",
+    "message": "Loan amount must be between $1,000 and $100,000",
+    "details": {
+      "parameter": "loanAmount",
+      "value": 500,
+      "constraint": "minimum: 1000"
+    }
+  }
+}
+```
+
+**Common Error Codes:**
+
+- `INVALID_PARAMETER` - Parameter validation failed
+- `RATE_LIMIT_EXCEEDED` - Too many requests
+- `SERVICE_UNAVAILABLE` - Temporary service issue
+- `PROVIDER_ERROR` - Lender integration error
+
+---
+
+## JSON Schemas
+
+Complete JSON schemas for all tools are available in the [mcp-financial-services repository](https://github.com/SecureLend/mcp-financial-services/tree/main/schemas).
+
+---
+
+## Need Help?
+
+<CardGroup cols={2}>
+  <Card title="Setup Guide" icon="rocket" href="/mcp/setup">
+    Connect Claude or ChatGPT
+  </Card>
+  <Card
+    title="Example Conversations"
+    icon="messages"
+    href="/mcp/financial-services"
+  >
+    See tools in action
+  </Card>
+  <Card title="SDK Documentation" icon="code" href="/sdk/javascript">
+    Programmatic integration
+  </Card>
+  <Card title="Support" icon="life-ring" href="mailto:developers@securelend.ai">
+    Email developers@securelend.ai
+  </Card>
+</CardGroup>

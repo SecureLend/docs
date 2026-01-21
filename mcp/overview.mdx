@@ -1,17 +1,220 @@
 ---
-title: MCP Overview
+title: "MCP Overview"
+description: "Connect Claude and ChatGPT to SecureLend financial comparison tools"
 ---
 
-> This documentation is available to SecureLend customers and partners.
+# Model Context Protocol (MCP)
 
-## What is MCP?
-MCP (Marketplace Connectivity Platform) is a suite of tools and APIs that allows financial service providers to integrate with the SecureLend marketplace. It enables partners to offer SecureLend's loan products directly within their own platforms.
+SecureLend provides a production Model Context Protocol server that enables AI assistants like Claude and ChatGPT to access 20+ financial comparison tools.
+
+**Server URL:** `https://mcp.securelend.ai/mcp`
+
+## What is Model Context Protocol?
+
+Model Context Protocol (MCP) is an open standard that allows AI assistants to connect to external tools and data sources. Our MCP server enables Claude and ChatGPT to:
+
+- Compare personal and business loans in real-time
+- Calculate mortgage and loan payments
+- Compare credit cards and banking products
+- Submit loan applications on behalf of users
+- Track application status
 
 ## Who is it for?
-MCP is designed for:
-- Financial institutions that want to expand their product offerings.
-- SaaS companies serving businesses that need financing.
-- Any platform that wants to embed financial services seamlessly.
 
-## When not to use it
-MCP is not suitable for businesses seeking a direct loan for themselves. It is an integration platform for partners, not a direct-to-consumer application portal. For direct loan applications, please use our main platform.
+**End Users:**
+
+- Anyone using Claude Desktop or ChatGPT who wants to compare financial products
+- Get instant loan comparisons through natural conversation
+- No need to visit multiple lender websites
+
+**Developers:**
+
+- Build AI-powered financial applications using our TypeScript SDK
+- Integrate financial comparison into your AI workflows
+- Connect programmatically to our MCP server
+
+**Businesses:**
+
+- Embed AI-powered financial advice in your applications
+- Provide employees with instant financial product comparisons
+- Automate financial decision support
+
+## Quick Start
+
+<CardGroup cols={2}>
+  <Card title="Claude Desktop" icon="message" href="/mcp/setup#claude-desktop">
+    Connect SecureLend to Claude Desktop
+  </Card>
+  <Card title="ChatGPT" icon="comment" href="/mcp/setup#chatgpt">
+    Add SecureLend to ChatGPT
+  </Card>
+  <Card title="TypeScript SDK" icon="code" href="/sdk/javascript">
+    Integrate programmatically
+  </Card>
+  <Card title="Tool Reference" icon="book" href="/mcp/tools">
+    Browse all 20 tools
+  </Card>
+</CardGroup>
+
+## Available Tools
+
+### Loan Comparison (6 tools)
+
+- **compare_personal_loans** - Personal loan offers based on credit and purpose
+- **compare_business_loans** - Business loans with revenue and industry matching
+- **compare_car_loans** - Auto loan rates for new and used vehicles
+- **compare_student_loans** - Student loan options by degree type
+- **compare_personal_mortgages** - Mortgage rates and terms for home purchases
+- **compare_business_mortgages** - Commercial mortgage options
+
+### Banking & Credit Cards (5 tools)
+
+- **compare_personal_banking** - Checking and savings account comparison
+- **compare_business_banking** - Business banking products and services
+- **compare_savings_accounts** - High-yield savings account rates
+- **compare_personal_credit_cards** - Personal credit cards by rewards type
+- **compare_business_credit_cards** - Business credit card options
+
+### Financial Calculators (3 tools)
+
+- **calculate_loan_payment** - Monthly payment calculator for any loan
+- **calculate_mortgage_payment** - PITI (Principal, Interest, Taxes, Insurance) calculator
+- **compare_lease_vs_purchase** - Vehicle lease vs buy cost comparison
+
+### Application Management (6 tools)
+
+- **get_offer** - Submit application to a selected lender
+- **get_multiple_offers** - Submit application to multiple lenders simultaneously
+- **track_offer_status** - Check status of submitted applications
+- **display_offer_form** - Generate pre-filled application forms
+- **display_upload_documents_form** - Upload required documents
+- **submit_documents** - Submit supporting documentation
+
+[View full tool reference →](/mcp/tools)
+
+## Example Use Cases
+
+### Personal Finance
+
+> "Compare personal loans for $25,000 to consolidate credit card debt. My credit score is 720."
+
+The AI assistant will use `compare_personal_loans` to fetch and compare offers from multiple lenders, presenting the best options with rates, terms, and monthly payments.
+
+### Business Financing
+
+> "I need a $200,000 equipment loan for my restaurant. My business has $1.2M annual revenue and I've been operating for 3 years."
+
+The AI will use `compare_business_loans` with your business profile to find competitive offers, then can help you submit applications with `get_offer`.
+
+### Home Buying
+
+> "What would my monthly payment be on a $400,000 home with 20% down at 6.5% interest, including taxes and insurance?"
+
+The AI uses `calculate_mortgage_payment` to provide a complete PITI breakdown.
+
+## Architecture
+
+```
+┌──────────────────────────────────────┐
+│   AI Assistant (Claude/ChatGPT)      │
+│   • Natural language interface        │
+│   • Context management                │
+└──────────────────────────────────────┘
+              ↓ MCP Protocol
+┌──────────────────────────────────────┐
+│   mcp.securelend.ai/mcp              │
+│   • Skybridge Framework               │
+│   • 20 financial tools                │
+│   • JSON Schema validation            │
+└──────────────────────────────────────┘
+              ↓ REST APIs
+┌──────────────────────────────────────┐
+│   SecureLend Backend Services        │
+│   • Lending Service                   │
+│   • AI Service                        │
+│   • Core Service                      │
+│   • Integration with 200+ lenders    │
+└──────────────────────────────────────┘
+```
+
+## Security & Compliance
+
+<Card title="SOC 2 Type 2 Certified" icon="shield-check">
+  SecureLend completed SOC 2 Type 2 certification in Q4 2024, demonstrating
+  enterprise-grade security controls.
+</Card>
+
+**Key Security Features:**
+
+- **No Authentication Required** - Comparison tools are read-only and public
+- **HTTPS Encryption** - All communications encrypted in transit
+- **Privacy-First Design** - Comparison data is not stored or logged
+- **Rate Limiting** - Protection against abuse
+- **Input Validation** - All parameters validated against JSON schemas
+
+**Data Handling:**
+
+- Comparison tool results are ephemeral (not stored)
+- Application submissions require explicit user consent
+- Personal information only transmitted when submitting applications
+- Full transparency about data usage at each step
+
+## When NOT to Use MCP
+
+MCP is designed for:
+
+- ✅ Comparing financial products
+- ✅ Getting rate quotes and estimates
+- ✅ Calculating payments
+- ✅ Submitting applications with user consent
+
+MCP is NOT suitable for:
+
+- ❌ Executing financial transactions (use our platform directly)
+- ❌ Accessing existing account data (use REST API with authentication)
+- ❌ Automated trading or investment decisions
+- ❌ Regulatory compliance workflows (requires audit trails)
+
+For these use cases, see our [REST API documentation](/api/loans) or contact our enterprise team.
+
+## Technical Details
+
+**Framework:** Skybridge (built on official MCP SDK)  
+**Protocol Version:** MCP 1.0  
+**Deployment:** AWS ECS Fargate (us-east-2)  
+**Availability:** 99.9% uptime SLA  
+**Rate Limits:** 100 requests/minute per IP (comparison tools)
+
+## Getting Started
+
+<Steps>
+  <Step title="Choose Your Platform">
+    Decide whether to use Claude Desktop, ChatGPT, or programmatic SDK
+    integration
+  </Step>
+  <Step title="Follow Setup Guide">
+    Complete the 2-minute setup for your chosen platform
+  </Step>
+  <Step title="Try Example Queries">
+    Test with the example conversations provided
+  </Step>
+  <Step title="Explore All Tools">
+    Review the complete tool reference and capabilities
+  </Step>
+</Steps>
+
+<Card title="Ready to Get Started?" icon="rocket" href="/mcp/setup">
+  Follow our setup guide to connect in under 2 minutes
+</Card>
+
+## Support
+
+- **Documentation:** This site (docs.securelend.ai)
+- **Status Page:** [status.securelend.ai](https://status.securelend.ai)
+- **Developer Email:** developers@securelend.ai
+- **GitHub Issues:** [github.com/SecureLend/mcp-financial-services](https://github.com/SecureLend/mcp-financial-services)
+
+<Note>
+  **Looking for B2B API integration?** See our [REST API
+  documentation](/api/loans) for embedding SecureLend in your platform.
+</Note>
