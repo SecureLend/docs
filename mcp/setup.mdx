@@ -92,10 +92,10 @@ Find your Claude Desktop configuration file:
     Support/Claude/claude_desktop_config.json ```
   </Tab>
 
-  <Tab title="Windows">
-    ```bash %APPDATA%\Claude\claude_desktop_config.json ``` Quick access: Press
-    `Win + R`, type `%APPDATA%\Claude`, press Enter
-  </Tab>
+<Tab title="Windows">
+  ```bash %APPDATA%\Claude\claude_desktop_config.json ``` Quick access: Press
+  `Win + R`, type `%APPDATA%\Claude`, press Enter
+</Tab>
 
   <Tab title="Linux">
     ```bash ~/.config/Claude/claude_desktop_config.json ``` Open in terminal:
@@ -143,37 +143,57 @@ Quit Claude Desktop completely and reopen it.
 
 ## ChatGPT
 
-SecureLend is available as a GPT in the ChatGPT store.
+Connect SecureLend's MCP server directly to ChatGPT using Developer Mode.
 
 ### Installation Steps
 
 <Steps>
-  <Step title="Open ChatGPT">
-    Go to [chat.openai.com](https://chat.openai.com) and log in
+  <Step title="Open ChatGPT Settings">
+    Go to [chat.openai.com](https://chat.openai.com), log in, and click **Settings** in the bottom left
   </Step>
 
-<Step title="Access GPT Store">
-  Click "Explore GPTs" in the sidebar or visit the [GPT
-  Store](https://chat.openai.com/gpts)
+<Step title="Navigate to Apps">In Settings, click on the **Apps** section</Step>
+
+<Step title="Create Developer App">
+  Click **Advanced** → **Create App** to access developer mode features
 </Step>
 
-<Step title="Search for SecureLend">
-  Search for **"SecureLend Financial Services"** in the GPT store
+<Step title="Enable Developer Mode">Toggle **Developer Mode** to ON</Step>
+
+<Step title="Add MCP Server">
+  Click **Add MCP Server** and enter: ``` https://mcp.securelend.ai/mcp ```
 </Step>
 
-  <Step title="Start Conversation">
-    Click on the SecureLend GPT to start using financial comparison tools
+  <Step title="Save Configuration">
+    Click **Save** to activate the SecureLend MCP server
   </Step>
 </Steps>
 
+<Check>
+  SecureLend tools are now available in ChatGPT! Start a new conversation and
+  try a financial query.
+</Check>
+
+<Accordion title="Alternative: GPT Store (If Available)">
+
+If SecureLend is published as a GPT in the ChatGPT store:
+
+1. Click "Explore GPTs" in the sidebar
+2. Search for **"SecureLend Financial Services"**
+3. Click on the SecureLend GPT to start using it
+
+The GPT connects to the same MCP server at `https://mcp.securelend.ai/mcp`.
+
+</Accordion>
+
 <Note>
-  **ChatGPT Plus or Enterprise required.** The SecureLend GPT connects to the
-  same MCP server at `https://mcp.securelend.ai/mcp`.
+  **ChatGPT Plus or Enterprise required** for MCP server access and Developer
+  Mode.
 </Note>
 
 ### Example Queries
 
-Try these in the SecureLend GPT:
+Try these in ChatGPT with SecureLend MCP enabled:
 
 ```text
 Compare business loans for $150,000 for working capital.
@@ -240,17 +260,17 @@ After installation, verify SecureLend is working:
     `compare_business_loans` and returns loan offers
   </Tab>
 
-  <Tab title="Personal Loans">
-    ```text Compare personal loans for $25,000 for debt consolidation with a
-    credit score of 720. ``` **Expected:** Claude uses `compare_personal_loans`
-    and returns offers
-  </Tab>
+<Tab title="Personal Loans">
+  ```text Compare personal loans for $25,000 for debt consolidation with a
+  credit score of 720. ``` **Expected:** Claude uses `compare_personal_loans`
+  and returns offers
+</Tab>
 
-  <Tab title="Mortgage Calculator">
-    ```text What would my monthly payment be on a $400,000 home with 20% down at
-    6.5% interest over 30 years? ``` **Expected:** Claude uses
-    `calculate_mortgage_payment` and returns PITI breakdown
-  </Tab>
+<Tab title="Mortgage Calculator">
+  ```text What would my monthly payment be on a $400,000 home with 20% down at
+  6.5% interest over 30 years? ``` **Expected:** Claude uses
+  `calculate_mortgage_payment` and returns PITI breakdown
+</Tab>
 
   <Tab title="Auto Loans">
     ```text Compare auto loans for a $35,000 new car with excellent credit. ```
@@ -480,13 +500,13 @@ After installing SecureLend, you get access to:
     Personal loans, business loans, auto loans, student loans, mortgages
   </Card>
 
-  <Card title="5 Banking Tools" icon="building-columns">
-    Personal banking, business banking, savings accounts, credit cards
-  </Card>
+<Card title="5 Banking Tools" icon="building-columns">
+  Personal banking, business banking, savings accounts, credit cards
+</Card>
 
-  <Card title="3 Financial Calculators" icon="calculator">
-    Loan payments, mortgage PITI, lease vs purchase analysis
-  </Card>
+<Card title="3 Financial Calculators" icon="calculator">
+  Loan payments, mortgage PITI, lease vs purchase analysis
+</Card>
 
   <Card title="6 Application Tools" icon="file-signature">
     Submit applications, track status, upload documents
