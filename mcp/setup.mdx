@@ -1,87 +1,165 @@
 ---
 title: "MCP Setup"
-description: "Connect SecureLend to Claude Desktop or ChatGPT in under 30 seconds"
+description: "Connect SecureLend to ChatGPT or Claude in under a minute"
 ---
 
 # MCP Setup
 
-Connect SecureLend's financial comparison tools to your AI assistant.
+SecureLend exposes two MCP endpoints — one for the borrower marketplace
+(loan comparison) and one for the underwriting agents (pitch deck precheck,
+IC memo, etc.). Connect the right one for your use case.
+
+| Endpoint | What it does | Who it's for |
+|----------|-------------|--------------|
+| `https://mcp.securelend.ai/mcp` | Loan comparison marketplace | Borrowers, lenders routing deals |
+| `https://agents.securelend.ai/mcp` | Agentic underwriting tools | VCs, lenders, analysts |
 
 <CardGroup cols={2}>
-  <Card title="Claude Desktop" icon="message" href="#claude-desktop">
-    One-click install for Claude Desktop
-  </Card>
   <Card title="ChatGPT" icon="comment" href="#chatgpt">
-    Setup for ChatGPT
+    App Store (marketplace) or manual MCP (agents)
   </Card>
-  <Card title="TypeScript SDK" icon="code" href="/sdk/javascript">
-    Programmatic integration
+  <Card title="Claude" icon="message" href="#claude">
+    Connectors or Claude.ai Integrations
   </Card>
   <Card title="Tool Reference" icon="book" href="/mcp/tools">
-    View all 20 tools
+    View all marketplace tools
+  </Card>
+  <Card title="Underwriting Agents" icon="brain" href="https://securelend.ai/agents">
+    Pitch deck precheck, IC memo, and more
   </Card>
 </CardGroup>
 
 ---
 
-## Claude Desktop
+## ChatGPT
 
-### One-Click Install (Recommended)
+### Marketplace — Live in the App Store (Recommended)
 
-The easiest way to add SecureLend to Claude Desktop.
+SecureLend's loan comparison marketplace is published in the ChatGPT App
+Store. No setup required.
 
 <Steps>
-  <Step title="Download Extension">
-    Click the button below to download the SecureLend MCP extension:
-    
-    <Card 
-      title="Download for Claude Desktop" 
-      icon="download"
-      href="https://extensions.securelend.ai/securelend.mcpb"
-    >
-      Download securelend.mcpb
-    </Card>
-    
-    This downloads a single file (~5KB) that contains the MCP server configuration.
+  <Step title="Open the SecureLend app in ChatGPT">
+    Go to [chatgpt.com/apps/securelend](https://chatgpt.com/apps/securelend/asdk_app_69513da1b04881919f74ae07c00a11f2#)
+    and click **Start chat**.
   </Step>
-
-<Step title="Install Extension">
-  **Double-click** the downloaded `securelend.mcpb` file. Claude Desktop will
-  automatically open and show an installation prompt:
-  <Frame>
-    <img
-      src="/images/claude-install-prompt.png"
-      alt="Claude Desktop installation prompt"
-    />
-  </Frame>
-  Click **"Install"** to add SecureLend to Claude Desktop.
-</Step>
-
-  <Step title="Verify Installation">
-    Open a new conversation in Claude Desktop and try:
-    
-    ```text
-    Compare business loans for $200,000 with 720 credit score
-    ```
-    
-    Claude should use the SecureLend tools to fetch real loan offers.
+  <Step title="Start asking">
+    Try: *"Compare business loans for $200,000 with 720 credit score"*
   </Step>
 </Steps>
 
 <Check>
-  **That's it!** SecureLend is now integrated with Claude Desktop. The
-  installation takes less than 30 seconds.
+  That's it. No developer mode, no MCP URL, no configuration needed for the
+  marketplace.
 </Check>
 
 ---
 
-### Manual Configuration (Alternative)
+### Underwriting Agents — Manual MCP Setup
 
-If you prefer to configure manually or the one-click install doesn't work:
+The underwriting agents (`agents.securelend.ai/mcp`) are not yet in the
+App Store. Connect them manually via ChatGPT's developer mode.
 
-<Accordion title="Manual Setup Instructions">
+<Note>
+  ChatGPT Plus or Enterprise required for developer mode and MCP server access.
+</Note>
 
-**Step 1: Locate Configuration File**
+<Steps>
+  <Step title="Enable Developer Mode">
+    Go to **Settings → Apps** and toggle **Developer mode** on.
+  </Step>
+  <Step title="Add the MCP Server">
+    Click **Add app** and paste:
+    ```
+    https://agents.securelend.ai/mcp
+    ```
+    Name it *SecureLend Agents*.
+  </Step>
+  <Step title="Start a conversation">
+    Open a new chat, click **+**, select **SecureLend Agents**, and say:
+    *"Precheck this deck"* or *"Draft an IC memo"*.
+  </Step>
+</Steps>
+
+<Check>
+  ChatGPT renders the underwriting agent results with interactive UI widgets —
+  the fit ring, criteria breakdown, strengths/weaknesses, and the "Promote to
+  underwriting case" button.
+</Check>
+
+#### Example queries for the agents
+
+```text
+Precheck this pitch deck against our Series A rubric.
+```
+
+```text
+Run quantitative analysis on this deal — domain is equity_investment.
+```
+
+```text
+Draft an IC memo from workspace ws_abc123.
+```
+
+---
+
+## Claude
+
+### Claude.ai — Integrations (Recommended)
+
+<Steps>
+  <Step title="Open Integrations">
+    In Claude.ai, go to **Settings → Integrations** and click **Add integration**.
+  </Step>
+  <Step title="Paste the MCP URL">
+    For the marketplace:
+    ```
+    https://mcp.securelend.ai/mcp
+    ```
+    For the underwriting agents:
+    ```
+    https://agents.securelend.ai/mcp
+    ```
+    Give it a name and click **Save**.
+  </Step>
+  <Step title="Use in a conversation">
+    Start a new chat. The SecureLend tools are available immediately — no
+    extension file needed.
+  </Step>
+</Steps>
+
+<Check>
+  SecureLend tools are now available in Claude.ai. Functionality is identical
+  to ChatGPT; ChatGPT renders richer UI widgets for the underwriting agents.
+</Check>
+
+---
+
+### Claude Desktop — Manual Configuration
+
+<Steps>
+  <Step title="Open Settings">
+    In Claude Desktop, go to **Settings → Connectors → Add MCP server**.
+  </Step>
+  <Step title="Paste the MCP URL">
+    For the marketplace:
+    ```
+    https://mcp.securelend.ai/mcp
+    ```
+    For the underwriting agents:
+    ```
+    https://agents.securelend.ai/mcp
+    ```
+  </Step>
+  <Step title="Restart and verify">
+    Restart Claude Desktop. Open a new conversation and ask:
+    ```text
+    List all SecureLend tools
+    ```
+  </Step>
+</Steps>
+
+<Accordion title="Alternative: edit claude_desktop_config.json manually">
 
 Find your Claude Desktop configuration file:
 
@@ -90,475 +168,125 @@ Find your Claude Desktop configuration file:
     ```bash
     ~/Library/Application Support/Claude/claude_desktop_config.json
     ```
-    
-    Open in terminal:
-    ```bash
-    open ~/Library/Application\ Support/Claude/claude_desktop_config.json
+  </Tab>
+  <Tab title="Windows">
+    ```
+    %APPDATA%\Claude\claude_desktop_config.json
     ```
   </Tab>
-
-<Tab title="Windows">
-  ```bash %APPDATA%\Claude\claude_desktop_config.json ``` Quick access: Press
-  `Win + R`, type `%APPDATA%\Claude`, press Enter
-</Tab>
-
   <Tab title="Linux">
     ```bash
     ~/.config/Claude/claude_desktop_config.json
     ```
-    
-    Open in terminal:
-    ```bash
-    nano ~/.config/Claude/claude_desktop_config.json
-    ```
   </Tab>
 </Tabs>
 
-**Step 2: Add SecureLend Server**
+Add to your `mcpServers` section:
 
-Add this configuration to your `mcpServers` section:
-
-<CodeGroup>
-```json New Configuration
-{
-  "mcpServers": {
-    "securelend": {
-      "url": "https://mcp.securelend.ai/mcp"
-    }
-  }
-}
-```
-
-```json Existing MCP Servers
+```json
 {
   "mcpServers": {
     "securelend": {
       "url": "https://mcp.securelend.ai/mcp"
     },
-    "other-server": {
-      "url": "https://example.com/mcp"
+    "securelend-agents": {
+      "url": "https://agents.securelend.ai/mcp"
     }
   }
 }
 ```
 
-</CodeGroup>
-
-**Step 3: Restart Claude Desktop**
-
-Quit Claude Desktop completely and reopen it.
+Restart Claude Desktop after saving.
 
 </Accordion>
 
 ---
 
-## ChatGPT
+## Which endpoint do I use?
 
-Connect SecureLend's MCP server directly to ChatGPT using Developer Mode.
-
-### Installation Steps
-
-<Steps>
-  <Step title="Open ChatGPT Settings">
-    Go to [chat.openai.com](https://chat.openai.com), log in, and click **Settings** in the bottom left
-  </Step>
-
-<Step title="Navigate to Apps">In Settings, click on the **Apps** section</Step>
-
-<Step title="Create Developer App">
-  Click **Advanced** → **Create App** to access developer mode features
-</Step>
-
-<Step title="Enable Developer Mode">Toggle **Developer Mode** to ON</Step>
-
-<Step title="Add MCP Server">
-  Click **Add MCP Server** and enter: ``` https://mcp.securelend.ai/mcp ```
-</Step>
-
-  <Step title="Save Configuration">
-    Click **Save** to activate the SecureLend MCP server
-  </Step>
-</Steps>
-
-<Check>
-  SecureLend tools are now available in ChatGPT! Start a new conversation and
-  try a financial query.
-</Check>
-
-<Accordion title="Alternative: GPT Store (If Available)">
-
-If SecureLend is published as a GPT in the ChatGPT store:
-
-1. Click "Explore GPTs" in the sidebar
-2. Search for **"SecureLend Financial Services"**
-3. Click on the SecureLend GPT to start using it
-
-The GPT connects to the same MCP server at `https://mcp.securelend.ai/mcp`.
-
-</Accordion>
-
-<Note>
-  **ChatGPT Plus or Enterprise required** for MCP server access and Developer
-  Mode.
-</Note>
-
-### Example Queries
-
-Try these in ChatGPT with SecureLend MCP enabled:
-
-```text
-Compare business loans for $150,000 for working capital.
-My business has $800K annual revenue in the retail industry.
-```
-
-```text
-What are the current auto loan rates for a $35,000 new car
-purchase with a 750 credit score?
-```
-
-```text
-Calculate my monthly payment for a $300,000 mortgage at 6.75%
-over 30 years including property taxes and insurance.
-```
-
----
-
-## TypeScript SDK
-
-For programmatic access, use our TypeScript SDK:
-
-```bash
-npm install @securelend/mcp-client
-# or
-pnpm add @securelend/mcp-client
-```
-
-```typescript
-import { SecureLendMCP } from "@securelend/mcp-client";
-
-const client = new SecureLendMCP();
-
-// Compare business loans
-const loans = await client.compareBusinessLoans({
-  loanAmount: 200000,
-  purpose: "equipment",
-  annualRevenue: 1200000,
-  creditScore: 720,
-});
-
-console.log(`Found ${loans.offers.length} offers`);
-loans.offers.forEach((offer) => {
-  console.log(`${offer.lenderName}: ${offer.interestRate}% APR`);
-});
-```
-
-**Full SDK documentation:** [/sdk/javascript](/sdk/javascript)
-
-**SDK Repository:** [github.com/SecureLend/sdk](https://github.com/SecureLend/sdk)
+| I want to… | Use |
+|------------|-----|
+| Compare loans, get rates, pre-qualify as a borrower | `mcp.securelend.ai/mcp` — or open the ChatGPT App Store app |
+| Precheck a pitch deck against my rubric | `agents.securelend.ai/mcp` |
+| Generate an IC memo or credit memo | `agents.securelend.ai/mcp` |
+| Run entity compliance / sanctions screening | `agents.securelend.ai/mcp` |
+| Build a custom lending workflow via SDK | See [TypeScript SDK](/sdk/javascript) |
 
 ---
 
 ## Verification
 
-After installation, verify SecureLend is working:
-
-### Quick Test Queries
+After setup, confirm tools are loading:
 
 <Tabs>
-  <Tab title="Business Loans">
+  <Tab title="Marketplace (mcp.securelend.ai)">
     ```text
-    Compare business loans for $200,000 for equipment. My business has
-    $1.2M annual revenue and a 720 credit score.
+    Compare business loans for $200,000 for working capital.
+    My business has $800K annual revenue and a 720 credit score.
     ```
-    
-    **Expected:** Claude uses `compare_business_loans` and returns loan offers
+    **Expected:** AI uses `compare_business_loans` and returns loan offers.
   </Tab>
-
-<Tab title="Personal Loans">
-  ```text Compare personal loans for $25,000 for debt consolidation with a
-  credit score of 720. ``` **Expected:** Claude uses `compare_personal_loans`
-  and returns offers
-</Tab>
-
-<Tab title="Mortgage Calculator">
-  ```text What would my monthly payment be on a $400,000 home with 20% down at
-  6.5% interest over 30 years? ``` **Expected:** Claude uses
-  `calculate_mortgage_payment` and returns PITI breakdown
-</Tab>
-
-  <Tab title="Auto Loans">
+  <Tab title="Agents (agents.securelend.ai)">
     ```text
-    Compare auto loans for a $35,000 new car with excellent credit.
+    List all tools available in SecureLend Agents.
     ```
-    
-    **Expected:** Claude uses `compare_car_loans` and returns rate comparisons
+    **Expected:** AI lists `pitch_deck_precheck`, `document_intelligence_agent`,
+    `quantitative_analysis_agent`, `professional_memo_agent`, and others.
   </Tab>
 </Tabs>
-
-<Check>
-  If Claude responds with specific loan offers, rates, or calculations,
-  SecureLend is working correctly!
-</Check>
 
 ---
 
 ## Troubleshooting
 
-### One-Click Install Issues
+### Claude
 
 <AccordionGroup>
-  <Accordion title="Double-clicking .mcpb file doesn't open Claude">
-    **Possible causes:**
-    - Claude Desktop not installed
-    - File association not set
-    
-    **Solutions:**
-    1. Ensure [Claude Desktop](https://claude.ai/download) is installed
-    2. Right-click the `.mcpb` file → Open With → Claude Desktop
-    3. Or drag the file onto the Claude Desktop icon
-    4. If still not working, use manual configuration method above
+  <Accordion title="Tools not appearing in Claude.ai">
+    1. Go to **Settings → Integrations** and confirm the URL is saved correctly
+    2. Start a **new** conversation — integrations only load in new chats
+    3. Check [status.securelend.ai](https://status.securelend.ai) for service status
   </Accordion>
-
-<Accordion title="Installation prompt doesn't appear">
-  **Possible causes:** - Claude Desktop is already running - Extension already
-  installed **Solutions:** 1. Quit Claude Desktop completely (check menu
-  bar/system tray) 2. Double-click the `.mcpb` file again 3. If already
-  installed, the extension should already be working 4. Test with a query to
-  verify it's working
-</Accordion>
-
-  <Accordion title="'Install' button is grayed out">
-    **Possible causes:**
-    - Extension already installed
-    - Conflicting extension name
-    
-    **Solutions:**
-    1. Check if SecureLend tools already work (try a test query)
-    2. If working, no need to reinstall
-    3. If not working, remove existing installation:
-       - Open Claude Desktop settings
-       - Remove "securelend" from MCP servers
-       - Try installation again
+  <Accordion title="Tools not appearing in Claude Desktop">
+    1. Confirm the URL is entered correctly in **Settings → Connectors**
+    2. Quit Claude Desktop completely and reopen it
+    3. Test the URL directly: open `https://mcp.securelend.ai/mcp` in a browser
+    4. Check [status.securelend.ai](https://status.securelend.ai)
+  </Accordion>
+  <Accordion title="Tools return errors">
+    1. Check parameter requirements in [Tool Reference](/mcp/tools)
+    2. Wait 60 seconds if rate limited (100 requests/minute)
+    3. Contact support@securelend.ai with the specific error message
   </Accordion>
 </AccordionGroup>
 
-### Claude Desktop Issues
+### ChatGPT
 
 <AccordionGroup>
-  <Accordion title="Tools not appearing in Claude">
-    **Possible causes:**
-    - Installation not complete
-    - Claude Desktop not restarted
-    - Network connectivity issues
-    
-    **Solutions:**
-    1. Quit Claude Desktop completely (check system tray/menu bar)
-    2. Reopen Claude Desktop and wait 5 seconds
-    3. Try reinstalling using the one-click installer
-    4. Check [status.securelend.ai](https://status.securelend.ai) for service status
-    5. Test network: Open `https://mcp.securelend.ai/mcp` in browser
+  <Accordion title="Can't find SecureLend in the App Store">
+    Go directly to: [chatgpt.com/apps/securelend](https://chatgpt.com/apps/securelend/asdk_app_69513da1b04881919f74ae07c00a11f2#)
   </Accordion>
-
-<Accordion title="Connection timeout errors">
-  **Possible causes:** - No internet connection - Firewall blocking HTTPS -
-  Corporate proxy restrictions **Solutions:** 1. Test connection: Open
-  `https://mcp.securelend.ai/mcp` in browser 2. Check firewall allows HTTPS to
-  mcp.securelend.ai 3. If behind corporate proxy, contact IT about MCP access 4.
-  Check [status.securelend.ai](https://status.securelend.ai)
-</Accordion>
-
-<Accordion title="Tools return errors">
-  **Possible causes:** - Invalid parameters - Rate limit exceeded - Server
-  issues **Solutions:** 1. Check parameter requirements in [Tool
-  Reference](/mcp/tools) 2. Wait 60 seconds if rate limited (100
-  requests/minute) 3. Verify
-  [status.securelend.ai](https://status.securelend.ai) 4. Try a different query
-  to isolate the issue 5. Contact support@securelend.ai with specific error
-  messages
-</Accordion>
-
-  <Accordion title="Want to uninstall SecureLend">
-    **Steps:**
-    1. Open Claude Desktop settings
-    2. Navigate to MCP servers section
-    3. Find "securelend" in the list
-    4. Click "Remove" or "Uninstall"
-    5. Restart Claude Desktop
-    
-    Or manually edit config file and remove securelend entry.
+  <Accordion title="Developer mode not available">
+    Developer mode requires ChatGPT Plus or Enterprise. Upgrade your plan, or
+    use Claude.ai (free tier supports integrations).
+  </Accordion>
+  <Accordion title="Agents not appearing after adding MCP server">
+    1. Confirm the URL is `https://agents.securelend.ai/mcp` (not the marketplace URL)
+    2. Start a new chat and click **+** to select the server
+    3. Ask "list all tools" to verify the connection
   </Accordion>
 </AccordionGroup>
 
-### ChatGPT Issues
-
-<AccordionGroup>
-  <Accordion title="Can't find SecureLend GPT">
-    **Solutions:**
-    1. Ensure you have ChatGPT Plus or Enterprise
-    2. Search for exact name: **"SecureLend Financial Services"**
-    3. Check if GPT is available in your region
-    4. Contact support@securelend.ai if unavailable
-  </Accordion>
-
-  <Accordion title="GPT returns generic responses">
-    **Possible causes:**
-    - Not using SecureLend GPT
-    - MCP connection failed
-    
-    **Solutions:**
-    1. Verify "SecureLend Financial Services" appears at top of chat
-    2. Start a new conversation with the SecureLend GPT
-    3. Try a specific query like "Compare business loans for $100k"
-  </Accordion>
-</AccordionGroup>
-
-### General Issues
-
-<AccordionGroup>
-  <Accordion title="Results seem outdated or incorrect">
-    **Solutions:**
-    1. Loan offers update in real-time - try refreshing the query
-    2. Check [status.securelend.ai](https://status.securelend.ai)
-    3. Verify parameters match lender requirements
-    4. Contact support@securelend.ai with specific examples
-  </Accordion>
-
-  <Accordion title="Need help with specific lender">
-    **Solutions:**
-    1. After comparison, use `get_offer` to submit application
-    2. Use `track_offer_status` to check progress
-    3. Contact lender directly for detailed questions
-    4. Email support@securelend.ai for integration help
-  </Accordion>
-  
-  <Accordion title="Using the wrong server URL">
-    The production MCP server URL is:
-    ```
-    https://mcp.securelend.ai/mcp
-    ```
-    
-    **NOT:**
-    - ~~https://mcp.dev.securelend.ai/mcp~~ (development)
-    - ~~https://extensions.securelend.ai/~~ (download page)
-    
-    The one-click installer automatically uses the correct production URL.
-  </Accordion>
-</AccordionGroup>
-
----
-
-## Example Conversations
-
-### Business Loan Comparison
-
-```text
-User: I need to compare business loans for $200,000. My business
-      has $1.2M annual revenue, 720 credit score, and I've been
-      in business for 3 years. I need the loan for equipment.
-
-Claude: [Uses compare_business_loans tool]
-
-I found several competitive offers for your $200k equipment loan:
-
-1. ABC Business Capital
-   - Interest Rate: 7.5% APR
-   - Monthly Payment: $3,200
-   - Term: 60 months
-   - Total Interest: $42,000
-   - Approval Likelihood: 85%
-
-2. SmallBiz Lending
-   - Interest Rate: 8.2% APR
-   - Monthly Payment: $3,350
-   - Term: 60 months
-   - Total Interest: $51,000
-   - Approval Likelihood: 90%
-
-Would you like me to help you submit an application
-to any of these lenders?
-```
-
-### Mortgage Calculation
-
-```text
-User: What would my monthly payment be on a $400,000 home with
-      20% down, 6.5% interest rate, 30-year term? Property taxes
-      are 1.2% and insurance is $1,500/year.
-
-Claude: [Uses calculate_mortgage_payment tool]
-
-Here's your complete monthly payment breakdown:
-
-Loan Details:
-- Home Price: $400,000
-- Down Payment: $80,000 (20%)
-- Loan Amount: $320,000
-
-Monthly PITI Payment: $2,547
-- Principal & Interest: $2,022
-- Property Taxes: $400 (1.2% annually)
-- Home Insurance: $125 ($1,500/year)
-
-Over 30 years:
-- Total Principal & Interest: $727,920
-- Total Interest Paid: $407,920
-
-With your 20% down payment, you'll avoid PMI.
-```
-
----
-
-## What's Included
-
-After installing SecureLend, you get access to:
-
-<CardGroup cols={2}>
-  <Card title="6 Loan Comparison Tools" icon="hand-holding-dollar">
-    Personal loans, business loans, auto loans, student loans, mortgages
-  </Card>
-
-<Card title="5 Banking Tools" icon="building-columns">
-  Personal banking, business banking, savings accounts, credit cards
-</Card>
-
-<Card title="3 Financial Calculators" icon="calculator">
-  Loan payments, mortgage PITI, lease vs purchase analysis
-</Card>
-
-  <Card title="6 Application Tools" icon="file-signature">
-    Submit applications, track status, upload documents
-  </Card>
-</CardGroup>
-
-**Total:** 20 tools for comprehensive financial product comparison
-
-[View full tool reference →](/mcp/tools)
-
----
-
-## Download Links
-
-<CardGroup cols={2}>
-  <Card
-    title="Production (Recommended)"
-    icon="download"
-    href="https://extensions.securelend.ai/securelend.mcpb"
-  >
-    Download for Claude Desktop
-  </Card>
-
-  <Card
-    title="Development (Testing)"
-    icon="flask"
-    href="https://extensions.dev.securelend.ai/securelend.mcpb"
-  >
-    Download development version
-  </Card>
-</CardGroup>
+### Wrong server URL
 
 <Warning>
-  Use the **production** version for normal usage. The development version is
-  for testing and may have unstable features.
+  The marketplace and agent endpoints are different:
+
+  - **Marketplace:** `https://mcp.securelend.ai/mcp`
+  - **Agents:** `https://agents.securelend.ai/mcp`
+
+  Using the marketplace URL for underwriting agents (or vice versa) will
+  give you the wrong set of tools.
 </Warning>
 
 ---
@@ -567,33 +295,15 @@ After installing SecureLend, you get access to:
 
 <CardGroup cols={2}>
   <Card title="Tool Reference" icon="book" href="/mcp/tools">
-    Explore all 20 available tools
+    All marketplace tools with parameters
   </Card>
-  <Card
-    title="Example Conversations"
-    icon="messages"
-    href="/mcp/financial-services"
-  >
-    See more detailed examples
+  <Card title="Example Conversations" icon="messages" href="/mcp/financial-services">
+    See tools in action
   </Card>
-  <Card title="SDK Documentation" icon="code" href="/sdk/javascript">
-    Integrate programmatically
+  <Card title="Underwriting Agents" icon="brain" href="https://securelend.ai/agents">
+    Pitch deck precheck, IC memo, and more
   </Card>
   <Card title="Support" icon="life-ring" href="mailto:developers@securelend.ai">
-    Get help from our team
+    developers@securelend.ai
   </Card>
 </CardGroup>
-
-## Support
-
-Need help? We're here for you:
-
-- **Email:** developers@securelend.ai
-- **Status:** [status.securelend.ai](https://status.securelend.ai)
-- **GitHub:** [SecureLend/mcp-financial-services](https://github.com/SecureLend/mcp-financial-services)
-- **Response Time:** Within 24 hours for developer inquiries
-
-<Info>
-  The one-click installer was designed to make MCP setup as simple as possible.
-  If you encounter any issues, please let us know at developers@securelend.ai.
-</Info>

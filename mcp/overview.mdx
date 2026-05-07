@@ -1,13 +1,18 @@
 ---
 title: "MCP Overview"
-description: "Connect Claude and ChatGPT to SecureLend financial comparison tools"
+description: "Connect Claude and ChatGPT to SecureLend's marketplace and underwriting agents"
 ---
 
 # Model Context Protocol (MCP)
 
-SecureLend provides a production Model Context Protocol server that enables AI assistants like Claude and ChatGPT to access 20+ financial comparison tools.
+SecureLend provides two production MCP endpoints:
 
-**Server URL:** `https://mcp.securelend.ai/mcp`
+| Endpoint | Purpose |
+|----------|---------|
+| `https://mcp.securelend.ai/mcp` | Loan comparison marketplace — 22 tools for borrowers and lenders |
+| `https://agents.securelend.ai/mcp` | Agentic underwriting tools — pitch deck precheck, IC memo, document intelligence, and more |
+
+The marketplace is also **live in the ChatGPT App Store** — no manual setup required for borrower-facing workflows.
 
 ## What is Model Context Protocol?
 
@@ -21,38 +26,35 @@ Model Context Protocol (MCP) is an open standard that allows AI assistants to co
 
 ## Who is it for?
 
-**End Users:**
+**Borrowers:**
+- Compare 200+ lenders for personal, business, and equipment loans inside ChatGPT or Claude
+- Get instant loan comparisons through natural conversation — no need to visit multiple lender websites
+- Easiest path: open the [SecureLend ChatGPT app](https://chatgpt.com/apps/securelend/asdk_app_69513da1b04881919f74ae07c00a11f2#) directly
 
-- Anyone using Claude Desktop or ChatGPT who wants to compare financial products
-- Get instant loan comparisons through natural conversation
-- No need to visit multiple lender websites
+**VC firms and lenders:**
+- Precheck pitch decks against your rubric ($0.50/check, first 15/month free)
+- Generate IC memos, credit memos, and underwriting memos from a deal workspace
+- Connect via `agents.securelend.ai/mcp` — see [underwriting agents setup](/mcp/setup#underwriting-agents---manual-mcp-setup)
 
 **Developers:**
-
 - Build AI-powered financial applications using our TypeScript SDK
-- Integrate financial comparison into your AI workflows
-- Connect programmatically to our MCP server
-
-**Businesses:**
-
-- Embed AI-powered financial advice in your applications
-- Provide employees with instant financial product comparisons
-- Automate financial decision support
+- Integrate loan comparison or underwriting workflows programmatically
+- See [SDK documentation](/sdk/javascript)
 
 ## Quick Start
 
 <CardGroup cols={2}>
-  <Card title="Claude Desktop" icon="message" href="/mcp/setup#claude-desktop">
-    Connect SecureLend to Claude Desktop
+  <Card title="ChatGPT App Store" icon="comment" href="https://chatgpt.com/apps/securelend/asdk_app_69513da1b04881919f74ae07c00a11f2#">
+    Open the marketplace app — no setup needed
   </Card>
-  <Card title="ChatGPT" icon="comment" href="/mcp/setup#chatgpt">
-    Add SecureLend to ChatGPT
+  <Card title="Claude / ChatGPT Setup" icon="message" href="/mcp/setup">
+    Connect either endpoint in under a minute
   </Card>
   <Card title="TypeScript SDK" icon="code" href="/sdk/javascript">
     Integrate programmatically
   </Card>
   <Card title="Tool Reference" icon="book" href="/mcp/tools">
-    Browse all 20 tools
+    Browse all marketplace tools
   </Card>
 </CardGroup>
 
@@ -139,9 +141,9 @@ The AI uses `calculate_mortgage_payment` to provide a complete PITI breakdown.
 
 ## Security & Compliance
 
-<Card title="SOC 2 Type 2 Certified" icon="shield-check">
-  SecureLend completed SOC 2 Type 2 certification in Q4 2024, demonstrating
-  enterprise-grade security controls.
+<Card title="SOC 2 Type II Completed" icon="shield-check">
+  SecureLend completed SOC 2 Type II certification, demonstrating
+  enterprise-grade security controls. OpenAI-approved for the ChatGPT App Store.
 </Card>
 
 **Key Security Features:**
