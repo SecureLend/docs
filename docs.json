@@ -25,6 +25,16 @@
         "pages": ["sdk/overview", "sdk/javascript", "sdk/examples"]
       },
       {
+        "group": "AI Agents",
+        "pages": [
+          "agents/overview",
+          "agents/quickstart",
+          "agents/authentication",
+          "agents/tools",
+          "agents/pricing"
+        ]
+      },
+      {
         "group": "MCP Integrations",
         "protected": true,
         "pages": [

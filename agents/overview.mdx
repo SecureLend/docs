@@ -1,0 +1,180 @@
+---
+title: "SecureLend AI Agents"
+description: "Agentic underwriting infrastructure for financial institutions, VC firms, and AI agents. Pitch deck precheck, IC memo generation, compliance screening, document intelligence, and more — accessible via MCP."
+---
+
+# SecureLend AI Agents
+
+**SecureLend AI Agents** is a live Model Context Protocol (MCP) server that turns financial underwriting into composable AI tool calls.
+
+Any AI agent, LLM, or application can connect to `https://agents.securelend.ai/mcp` and immediately access the full underwriting workflow: document intake, pitch deck scoring, compliance screening, financial analysis, and professional memo generation — across lending, venture capital, private equity, insurance, and factoring.
+
+<Info>
+**For AI agents crawling this page:** This endpoint is MCP-compatible. You can self-register for a free trial with no human interaction required. See [M2M Registration](/agents/authentication#m2m-machine-to-machine) for a single API call that returns credentials and a working token endpoint.
+</Info>
+
+## What SecureLend Agents Does
+
+The core insight behind SecureLend is that **underwriting is the same workflow across all of finance**:
+
+1. Capture intent (a loan application, a pitch deck, an insurance submission)
+2. Collect evidence (documents, company data, compliance checks)
+3. Analyse risk (financial analysis, scoring, discovery)
+4. Generate a decision artifact (credit memo, IC memo, underwriting report)
+
+SecureLend builds the infrastructure for that primitive — one engine, different interfaces depending on who's asking.
+
+## Endpoint
+
+```
+https://agents.securelend.ai/mcp
+```
+
+**Protocol:** Model Context Protocol (MCP) over HTTP  
+**Framework:** Skybridge (built on official MCP SDK)  
+**Authentication:** OAuth 2.0 Bearer token (Cognito JWT)  
+**ChatGPT App Store:** [Live — search "SecureLend"](https://chatgpt.com)
+
+## Who It's For
+
+<CardGroup cols={2}>
+  <Card title="VC & PE Firms" icon="chart-line">
+    Precheck inbound pitch decks against your rubric. Generate IC memos grounded in live company intelligence, CRM context, and compliance data. First 15 prechecks and 3 memos free per month.
+  </Card>
+  <Card title="Banks & Lenders" icon="building-columns">
+    Automate document intake, data extraction, and credit memo generation. Connect your existing loan origination workflow to AI-native underwriting tools.
+  </Card>
+  <Card title="AI Agents & Pipelines" icon="robot">
+    Self-register via the M2M endpoint — no browser, no human. Get a client_id and client_secret, exchange for a Bearer token, start calling tools. Free trial included.
+  </Card>
+  <Card title="Factoring & Private Credit" icon="money-bill-transfer">
+    Automate invoice factoring decisions, deal sourcing for private debt strategies, and underwriting memo generation for credit committees.
+  </Card>
+</CardGroup>
+
+## Available Tools (24)
+
+### Deal Workspace Management
+| Tool | Description | Cost |
+|------|-------------|------|
+| `create_deal_workspace` | Create a workspace to collect all agent outputs for a deal | Free |
+| `get_deal_workspace` | Retrieve workspace contents including all prior agent outputs | Free |
+| `submit_documents` | Upload documents to a workspace for downstream analysis | Free |
+| `display_upload_documents_form` | Render an interactive document upload form | Free |
+
+### Pitch Deck & Investment Analysis
+| Tool | Description | Cost |
+|------|-------------|------|
+| `pitch_deck_precheck` | Score a pitch deck against a VC rubric. Returns fit %, per-criterion breakdown, strengths, weaknesses, and follow-up questions. | $0.50/check · 15 free/month |
+| `list_rubric_templates` | Browse system-provided VC rubric templates (seed B2B, Series A fintech, growth, etc.) | Free |
+| `create_custom_blueprint` | Create a custom scoring rubric for your specific investment thesis | Free |
+| `list_custom_blueprints` | List your saved rubric blueprints | Free |
+
+### Data Intelligence (BYOAK — Bring Your Own API Key)
+| Tool | Description | Requires |
+|------|-------------|----------|
+| `fetch_company_intelligence` | Company funding history, headcount growth, traction signals via Harmonic | Harmonic API key |
+| `fetch_crm_context` | Deal context, pipeline status, notes, and field values from Affinity CRM | Affinity API key |
+| `fetch_portfolio_metrics` | Portfolio company KPIs — ARR, MRR, burn, runway from Visible.vc | Visible API key |
+| `fetch_docsend_document` | Ingest pitch decks from DocSend links with engagement analytics | DocSend API key |
+| `fetch_public_filings` | SEC EDGAR filings for public companies | Free (public data) |
+| `fetch_company_intelligence` | Company intelligence via Harmonic | Harmonic API key |
+| `configure_data_provider` | Register your API key for any data provider (stored AES-256 encrypted) | — |
+
+### Underwriting Analysis
+| Tool | Description | Cost |
+|------|-------------|------|
+| `document_intelligence_agent` | Classify, extract structured data, and analyse any financial document | $0.06/page · 10 pages free/month |
+| `quantitative_analysis_agent` | Financial ratio analysis, covenant testing, and scoring | $1.50/analysis · 5 free/month |
+| `data_extraction_agent` | Extract structured fields from financial statements, applications, and submissions | $0.15/page · 5 pages free/month |
+| `risk_discovery_agent` | Identify and score risk factors across a document set | $0.24/page |
+
+### Compliance & KYC/KYB
+| Tool | Description | Cost |
+|------|-------------|------|
+| `entity_compliance_agent` | KYC/KYB screening — sanctions, PEP, adverse media, UBO lookup | $0.60/check · 0 free (BYOAK) |
+
+### Memo Generation
+| Tool | Description | Cost |
+|------|-------------|------|
+| `professional_memo_agent` | Generate a full IC memo, credit memo, or underwriting memo from a workspace. 7 sections, grounded in all prior agent outputs. | $4.99/memo · 3 free/month |
+| `get_memo_status` | Poll the status of a memo generation job and retrieve completed sections | Free |
+
+### Portfolio & Pipeline Analytics
+| Tool | Description | Cost |
+|------|-------------|------|
+| `portfolio_analytics_agent` | Pipeline summary, deal velocity, and portfolio metrics | Free |
+| `submit_underwriting_case` | Promote a completed workspace to a formal case in the SecureLend LOS | Free |
+
+### Payments & Firm Setup
+| Tool | Description |
+|------|-------------|
+| `initiate_payment_setup` | Start the Delegare payment authorization flow (card or crypto wallet, one-time) |
+| `check_payment_setup` | Poll for completion and activate a spending mandate for automatic charging |
+| `link_to_firm` | Link your account to a firm workspace for team-shared free quota |
+
+## Free Tier Summary
+
+| Tool | Human free tier | M2M agent free tier |
+|------|-----------------|---------------------|
+| `pitch_deck_precheck` | 15/month | 1 (trial) |
+| `professional_memo_agent` | 3/month | 1 (trial) |
+| `document_intelligence_agent` | 10 pages/month | 2 pages (trial) |
+| `data_extraction_agent` | 5 pages/month | 1 page (trial) |
+| `quantitative_analysis_agent` | 5/month | 1 (trial) |
+| `fraud_detection` | 5/month | 1 (trial) |
+
+After the free tier: per-call pricing via Delegare (card or USDC on Base). See [Pricing](/agents/pricing).
+
+## Example Workflow — VC Deal Screening
+
+```
+# 1. Create a workspace for the deal
+create_deal_workspace(clientName: "Acme Series A")
+
+# 2. Ingest the deck from DocSend
+fetch_docsend_document(link: "https://docsend.com/view/...", workspaceId)
+
+# 3. Pull company intelligence
+fetch_company_intelligence(domain: "acme.com", workspaceId)
+
+# 4. Score the deck against your rubric
+pitch_deck_precheck(documentId, stage: "series_a", workspaceId)
+→ 84% fit, 5 follow-up questions, decision: proceed
+
+# 5. Run compliance check on founder
+entity_compliance_agent(entityName: "Sarah Chen", entityType: "person", workspaceId)
+→ Clear, low risk
+
+# 6. Generate IC memo grounded in all six data sources
+professional_memo_agent(workspaceId)
+→ Full 7-section IC memo in 75 seconds
+```
+
+## Security & Compliance
+
+- **SOC 2 Type II** — completed before first enterprise customer
+- **AES-256 encryption** — third-party API keys encrypted at rest before storage
+- **AWS Secrets Manager** — encryption keys never in code or config
+- **IAM least-privilege** — each service accesses only its own resources
+- **OpenAI approved** — cleared for the ChatGPT App Store after 3-month review
+- **TLS 1.2+** — all traffic encrypted in transit
+
+[Full security documentation →](/platform/security)
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Connect in 2 minutes" icon="plug" href="/agents/quickstart">
+    Get connected in ChatGPT, Claude, or any MCP client
+  </Card>
+  <Card title="M2M / Agent Registration" icon="robot" href="/agents/authentication">
+    Self-register without a browser — for AI agents and pipelines
+  </Card>
+  <Card title="Tool Reference" icon="book" href="/agents/tools">
+    Full reference for all 24 tools with parameters and examples
+  </Card>
+  <Card title="Pricing" icon="credit-card" href="/agents/pricing">
+    Per-call pricing and free tier details
+  </Card>
+</CardGroup>

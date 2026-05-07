@@ -1,0 +1,492 @@
+---
+title: "Tool Reference"
+description: "Complete reference for all 24 SecureLend AI Agent tools — parameters, outputs, pricing, and examples."
+---
+
+# Tool Reference
+
+All tools are available at `https://agents.securelend.ai/mcp` via the MCP `tools/call` method.
+
+## Workspace Management
+
+### `create_deal_workspace`
+
+Creates a named workspace to collect all agent outputs for a single deal. Every subsequent tool call that references the workspace ID will store its results there, enabling the `professional_memo_agent` to synthesise all data sources into a single memo.
+
+**Parameters:**
+```typescript
+{
+  clientName: string  // Deal or company name e.g. "Acme Series A"
+  metadata?: object   // Optional custom fields
+}
+```
+
+**Returns:** `{ workspaceId: string, clientName: string, status: "ACTIVE" }`
+
+**Cost:** Free
+
+---
+
+### `get_deal_workspace`
+
+Retrieves a workspace and all task outputs stored in it.
+
+**Parameters:**
+```typescript
+{
+  workspaceId: string
+}
+```
+
+**Returns:** Workspace metadata + all prior agent task results indexed by task type
+
+**Cost:** Free
+
+---
+
+### `submit_documents`
+
+Upload one or more documents to a workspace for downstream analysis. Returns a `documentId` for use with `pitch_deck_precheck`, `document_intelligence_agent`, and `data_extraction_agent`.
+
+**Parameters:**
+```typescript
+{
+  workspaceId?: string
+  documentType?: string  // e.g. "pitch-deck", "financial-statement", "application"
+}
+```
+
+**Returns:** `{ documentId: string, status: "PENDING_UPLOAD" | "READY" }`
+
+**Cost:** Free
+
+---
+
+## Pitch Deck & Investment Analysis
+
+### `pitch_deck_precheck`
+
+Scores a pitch deck PDF against a VC investment rubric. Sends the deck directly to the LLM (no OCR) for visual + text analysis. Returns an overall fit percentage, per-criterion breakdown, strengths, weaknesses, and follow-up questions calibrated to what an IC would push back on.
+
+**Parameters:**
+```typescript
+{
+  documentId: string           // From submit_documents or fetch_docsend_document
+  stage?: "pre_seed" | "seed" | "series_a" | "series_b" | "growth"
+  blueprintId?: string         // Custom rubric ID from create_custom_blueprint
+  workspaceId?: string         // Store result for memo generation
+}
+```
+
+**Returns:**
+```typescript
+{
+  overallFit: number           // 0-100 percentage
+  decision: "proceed" | "pass" | "needs_more_info"
+  criteria: Array<{
+    id: string
+    label: string
+    score: number
+    passed: boolean
+    hardFail: boolean
+    rationale: string
+    evidence: string           // Quote from deck
+  }>
+  strengths: string[]
+  weaknesses: string[]
+  followUpQuestions: string[]  // IC-ready questions
+  costCents: number
+}
+```
+
+**Cost:** $0.50/check · First 15/month free (human), 1 free trial (M2M)
+
+---
+
+### `list_rubric_templates`
+
+Browse system-provided VC rubric templates. Useful for discovering which rubric to use before calling `pitch_deck_precheck`.
+
+**Parameters:** None
+
+**Returns:** Array of available rubrics with `blueprintId`, `name`, `stage`, `thesis`, `criteriaCount`
+
+Available system rubrics:
+- `system#pitch-deck-vc-seed-b2b-fintech-infra` — Seed B2B Fintech Infrastructure
+- `system#pitch-deck-vc-seed-b2c-consumer` — Seed B2C Consumer
+- `system#pitch-deck-vc-series_a-fintech` — Series A Fintech
+- `system#pitch-deck-vc-series_a-vertical-saas` — Series A Vertical SaaS
+- `system#pitch-deck-vc-growth-general` — Growth Stage (Series B+)
+
+**Cost:** Free
+
+---
+
+### `create_custom_blueprint`
+
+Create a custom scoring rubric for your specific investment thesis.
+
+**Parameters:**
+```typescript
+{
+  documentType: string         // e.g. "pitch-deck"
+  kind: "rubric"
+  stage?: string
+  thesis?: string
+  criteria: Array<{
+    id: string
+    label: string
+    weight: number             // Must sum to 1.0
+    hardFail: boolean
+    prompt: string             // Scoring instructions for the LLM
+  }>
+  passThreshold?: number       // 0-100, default 60
+  visibility?: "private" | "shared"
+}
+```
+
+**Cost:** Free
+
+---
+
+## Data Intelligence (BYOAK)
+
+These tools require a third-party API key registered via `configure_data_provider`. Your API key is stored AES-256 encrypted and never leaves your tenant.
+
+### `configure_data_provider`
+
+Register an API key for a data provider. Called once per provider — credentials persist until you rotate them.
+
+**Parameters:**
+```typescript
+{
+  provider: "harmonic" | "visible" | "affinity" | "docsend" | "complyadvantage" | "refinitiv"
+  apiKey: string
+}
+```
+
+**Cost:** Free
+
+---
+
+### `fetch_company_intelligence`
+
+Enriches a company from Harmonic — funding history, headcount growth, traction signals, and investor data.
+
+**Parameters:**
+```typescript
+{
+  domain?: string              // e.g. "acme.com"
+  companyName?: string
+  workspaceId?: string
+}
+```
+
+**Requires:** `configure_data_provider(provider: "harmonic", apiKey: "...")`
+
+**Cost:** Free (your Harmonic API key usage applies)
+
+---
+
+### `fetch_crm_context`
+
+Pulls deal context, pipeline status, meeting notes, and field values from Affinity CRM.
+
+**Parameters:**
+```typescript
+{
+  companyName: string
+  workspaceId?: string
+}
+```
+
+**Requires:** `configure_data_provider(provider: "affinity", apiKey: "...")`
+
+**Cost:** Free (your Affinity API usage applies)
+
+---
+
+### `fetch_portfolio_metrics`
+
+Retrieves portfolio company KPIs — ARR, MRR, burn rate, runway, and investor update notes from Visible.vc.
+
+**Parameters:**
+```typescript
+{
+  companyName?: string
+  workspaceId?: string
+}
+```
+
+**Requires:** `configure_data_provider(provider: "visible", apiKey: "...")`
+
+**Cost:** Free (your Visible API usage applies)
+
+---
+
+### `fetch_docsend_document`
+
+Ingests a pitch deck or dataroom document directly from a DocSend share link. Returns `documentId` for downstream analysis plus engagement analytics (views, dwell time per slide).
+
+**Parameters:**
+```typescript
+{
+  link: string                 // DocSend share URL
+  workspaceId?: string
+}
+```
+
+**Requires:** `configure_data_provider(provider: "docsend", apiKey: "...")` (Business/Enterprise plan)
+
+**Cost:** Free (your DocSend plan applies)
+
+---
+
+### `fetch_public_filings`
+
+Retrieves SEC EDGAR filings for publicly traded companies. No API key required.
+
+**Parameters:**
+```typescript
+{
+  companyName?: string
+  ticker?: string
+  cik?: string
+  workspaceId?: string
+}
+```
+
+**Cost:** Free
+
+---
+
+## Compliance & KYC/KYB
+
+### `entity_compliance_agent`
+
+Runs KYC (individuals) or KYB (entities) screening against sanctions lists, PEP registers, and adverse media. Supports ComplyAdvantage and Refinitiv World-Check.
+
+**Parameters:**
+```typescript
+{
+  entityName?: string
+  entityId?: string            // From workspace documents if previously identified
+  entityType: "person" | "company"
+  checkType: "KYC" | "KYB" | "sanctions" | "full"
+  provider?: "complyadvantage" | "refinitiv"
+  workspaceId?: string
+}
+```
+
+**Returns:**
+```typescript
+{
+  status: "CLEAR" | "MATCH" | "REVIEW"
+  riskScore: number            // 0-100
+  riskLevel: "low" | "medium" | "high"
+  matches: Match[]
+  sanctions: { matched: boolean, lists: string[] }
+  pep: { matched: boolean, positions: string[] }
+  adverseMedia: { matched: boolean, articles: Article[] }
+  summary: string
+}
+```
+
+**Requires:** `configure_data_provider(provider: "complyadvantage", ...)` or `configure_data_provider(provider: "refinitiv", ...)`
+
+**Cost:** $0.60/check · 0 free (BYOAK pricing applies)
+
+---
+
+## Document Intelligence
+
+### `document_intelligence_agent`
+
+Classifies, extracts structured data, and provides analysis for any financial document — financial statements, applications, identity documents, and more.
+
+**Parameters:**
+```typescript
+{
+  documentId: string
+  workspaceId?: string
+}
+```
+
+**Cost:** $0.06/page · First 10 pages/month free
+
+---
+
+### `data_extraction_agent`
+
+Extracts structured fields from financial documents using the document's extraction blueprint.
+
+**Parameters:**
+```typescript
+{
+  documentId: string
+  blueprintId?: string
+  workspaceId?: string
+}
+```
+
+**Cost:** $0.15/page · First 5 pages/month free
+
+---
+
+### `quantitative_analysis_agent`
+
+Financial ratio analysis, covenant testing, and scoring from extracted financial data.
+
+**Parameters:**
+```typescript
+{
+  documentId?: string
+  workspaceId?: string
+}
+```
+
+**Cost:** $1.50/analysis · First 5/month free
+
+---
+
+### `risk_discovery_agent`
+
+Identifies and scores risk factors across a document set or workspace.
+
+**Parameters:**
+```typescript
+{
+  documentId?: string
+  workspaceId?: string
+}
+```
+
+**Cost:** $0.24/page
+
+---
+
+## Memo Generation
+
+### `professional_memo_agent`
+
+Generates a full professional underwriting memo grounded in all prior agent outputs in a workspace. Supports three modes:
+
+- **workspace** (default when `workspaceId` provided) — synthesises all task outputs into a full memo
+- **document** — analyses a single document  
+- **lending_application** — generates a credit memo from a lending application
+
+**Parameters:**
+```typescript
+{
+  workspaceId?: string         // Recommended — uses all workspace data
+  sourceType?: "workspace" | "document" | "lending_application"
+  sourceId?: string
+  templateId?: string          // Default: vc-investment-memo-template for VC workspaces
+}
+```
+
+**Returns:** Job details immediately. Memo generates async in ~75 seconds. Use `get_memo_status` to retrieve.
+
+**Available templates:**
+- `vc-investment-memo-template` — 7-section IC memo (auto-selected for VC workspaces)
+- `default-credit-memo-template` — Standard credit memo for lending
+
+**Cost:** $4.99/memo · First 3/month free (human), 1 free trial (M2M)
+
+---
+
+### `get_memo_status`
+
+Polls the status of a memo generation job. Returns sections with full content when complete.
+
+**Parameters:**
+```typescript
+{
+  jobId: string                // From professional_memo_agent response
+}
+```
+
+**Returns:**
+```typescript
+{
+  status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED"
+  progress: number             // 0-100
+  memoId?: string
+  sections?: Array<{
+    sectionType: string
+    title: string
+    content: string            // Full markdown content
+    orderIndex: number
+  }>
+}
+```
+
+**Cost:** Free
+
+---
+
+## Portfolio & Pipeline Analytics
+
+### `portfolio_analytics_agent`
+
+Returns pipeline summary, deal velocity, and portfolio metrics for the current period.
+
+**Parameters:**
+```typescript
+{
+  period?: "today" | "week" | "month" | "quarter"
+  domain?: "commercial_loan" | "reinsurance_treaty" | "equity_investment"
+}
+```
+
+**Cost:** Free
+
+---
+
+### `submit_underwriting_case`
+
+Promotes a completed workspace into a formal case in the SecureLend LOS (Loan Origination System).
+
+**Parameters:**
+```typescript
+{
+  workspaceId: string
+  domain?: "commercial_loan" | "reinsurance_treaty" | "equity_investment"
+  requestedAmount?: number
+}
+```
+
+**Cost:** Free
+
+---
+
+## Payment Setup
+
+### `initiate_payment_setup`
+
+Starts the Delegare payment authorization flow. Returns a URL — open it in a browser to authorize a monthly spending budget via card or crypto wallet. The one-time setup takes ~30 seconds; all subsequent tool charges are automatic.
+
+**Parameters:**
+```typescript
+{
+  maxMonthlyBudgetUsd?: number  // Default $50, max $500
+  rail?: "fiat" | "crypto" | "both"
+}
+```
+
+**Returns:** `{ setupUrl: string, sessionToken: string, ... }`
+
+---
+
+### `check_payment_setup`
+
+Polls for completion of the payment setup flow. Returns `complete` with an active mandate once the user has authorized.
+
+**Parameters:**
+```typescript
+{
+  session_token: string        // From initiate_payment_setup
+}
+```
+
+**Returns:** `{ status: "pending" | "complete" | "expired", intentMandate?: string }`

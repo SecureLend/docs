@@ -1,0 +1,108 @@
+---
+title: "Pricing"
+description: "Per-call pricing, free tier limits, and payment options for SecureLend AI Agents."
+---
+
+# Pricing
+
+SecureLend AI Agents uses usage-based pricing. You pay only for what you use. Free tiers cover meaningful trial usage — no credit card required to start.
+
+## Free Tier
+
+### Human accounts (monthly reset)
+
+| Tool | Free calls/month |
+|------|-----------------|
+| `pitch_deck_precheck` | 15 |
+| `professional_memo_agent` | 3 |
+| `document_intelligence_agent` | 10 pages |
+| `data_extraction_agent` | 5 pages |
+| `quantitative_analysis_agent` | 5 |
+| `automated_underwriting` | 3 |
+| `fraud_detection` | 5 |
+| All workspace tools | Unlimited |
+| All analytics tools | Unlimited |
+| `fetch_public_filings` | Unlimited |
+
+Free tier resets on the 1st of each month. [Sign up at agents.securelend.ai](https://agents.securelend.ai) to access the full monthly free tier.
+
+### M2M / Agent accounts (one-time trial)
+
+| Tool | Free trial |
+|------|-----------|
+| `pitch_deck_precheck` | 1 |
+| `professional_memo_agent` | 1 |
+| `document_intelligence_agent` | 2 pages |
+| `data_extraction_agent` | 1 page |
+| `automated_underwriting` | 1 |
+| `fraud_detection` | 1 |
+
+M2M trial is designed to let you validate the complete workflow end-to-end (1 precheck + 1 IC memo) before committing to payment. After the trial, per-call pricing applies.
+
+---
+
+## Per-Call Pricing
+
+| Tool | Price |
+|------|-------|
+| `pitch_deck_precheck` | **$0.50** per check |
+| `professional_memo_agent` | **$4.99** per memo |
+| `document_intelligence_agent` | **$0.06** per page |
+| `data_extraction_agent` | **$0.15** per page |
+| `quantitative_analysis_agent` | **$1.50** per analysis |
+| `risk_discovery_agent` | **$0.24** per page |
+| `entity_compliance_agent` | **$0.60** per check |
+| Workspace tools | Free |
+| Analytics tools | Free |
+| BYOAK data tools | Free (your API key costs apply) |
+
+<Note>
+Pricing reflects infrastructure and orchestration costs — not the underlying LLM cost, which SecureLend absorbs. A $4.99 IC memo involves 7 LLM calls, S3 storage, and 4 Lambda invocations. The gross margin is ~83%.
+</Note>
+
+---
+
+## Value Comparison
+
+| Task | Human analyst | SecureLend |
+|------|--------------|------------|
+| First-pass pitch deck screen | 1-2 hours @ $75-150/hr | $0.50 (90 seconds) |
+| IC memo draft | 2-4 hours @ $100-150/hr | $4.99 (75 seconds) |
+| KYC/KYB check | 30-60 min @ $50-100/hr | $0.60 (30 seconds) |
+| Document extraction | 1-2 hours @ $50-75/hr | $0.06-0.15/page |
+
+---
+
+## Payment Methods
+
+### Fiat (Card via Stripe)
+- Enter card details once in the setup flow
+- All subsequent charges happen automatically
+- Monthly invoice available
+
+### USDC on Base (Crypto)
+- Sign one EIP-3009 permit transaction from any Ethereum wallet
+- SecureLend's Delegare layer settles on-chain per call
+- No custody of your keys — you authorize a spending limit, Delegare routes charges within it
+- Suitable for fully autonomous agent workflows
+
+### Setting Up Payment
+
+When you exhaust your free tier, tool calls return a 402. Use `initiate_payment_setup`:
+
+```
+initiate_payment_setup(maxMonthlyBudgetUsd: 50)
+→ Returns setup URL (valid 10 minutes)
+→ Open URL, complete card/wallet authorization (~30 seconds)
+→ All future calls charge automatically
+```
+
+Or call `check_payment_setup(session_token)` to confirm authorization completed.
+
+---
+
+## Firm Plans
+
+If you're connecting SecureLend to a team (multiple analysts at a VC firm, loan officers at a bank), use `link_to_firm` to create a shared billing bucket. The firm's free tier is shared across all team members, and a single payment authorization covers the whole team.
+
+Contact [enterprise@securelend.ai](mailto:enterprise@securelend.ai) for volume pricing and custom arrangements.

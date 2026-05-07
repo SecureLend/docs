@@ -1,0 +1,116 @@
+---
+title: "Quickstart"
+description: "Connect to SecureLend AI Agents in under 2 minutes from ChatGPT, Claude, or any MCP client."
+---
+
+# Quickstart
+
+## Option 1 — ChatGPT (No Setup)
+
+The SecureLend Agents app is live in the ChatGPT App Store.
+
+1. Open ChatGPT
+2. Search for **"SecureLend"** in Apps
+3. Start a conversation — all 24 underwriting tools are immediately available
+
+No configuration needed. Sign in with your SecureLend account or create one during the flow.
+
+## Option 2 — Claude Desktop
+
+Add to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "securelend-agents": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://agents.dev.securelend.ai/mcp"
+      ]
+    }
+  }
+}
+```
+
+Restart Claude Desktop. You'll be prompted to authenticate with your SecureLend account on first use.
+
+## Option 3 — Any MCP Client
+
+The endpoint supports standard MCP over HTTP with OAuth 2.0:
+
+```
+MCP Endpoint:     https://agents.securelend.ai/mcp
+Auth:             OAuth 2.0 Bearer token
+Discovery:        https://agents.securelend.ai/.well-known/oauth-authorization-server
+Registration:     https://agents.securelend.ai/oauth/register
+```
+
+Most MCP clients (Claude Desktop, Cursor, Windsurf, etc.) handle OAuth automatically when you provide the endpoint URL.
+
+## Option 4 — M2M / AI Agents (No Browser)
+
+For AI pipelines and machine clients — no browser required:
+
+```bash
+# Step 1: Register (one-time, no human interaction)
+curl -s -X POST "https://agents.dev.securelend.ai/oauth/m2m/register" \
+  -H "Content-Type: application/json" \
+  -d '{"client_name": "My Agent"}'
+
+# Returns: client_id, client_secret, scope, token_request_example
+
+# Step 2: Get a token (copy token_request_example from Step 1)
+curl -s -X POST "https://agents.dev.securelend.ai/oauth/token" \
+  -u "CLIENT_ID:CLIENT_SECRET" \
+  -d "grant_type=client_credentials&scope=https://agents.dev.securelend.ai/mcp.access"
+
+# Returns: access_token (1 hour validity)
+
+# Step 3: Call any MCP tool
+curl -s -X POST "https://agents.dev.securelend.ai/mcp" \
+  -H "Authorization: Bearer ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "pitch_deck_precheck",
+      "arguments": {
+        "documentId": "doc_xxx",
+        "stage": "seed"
+      }
+    },
+    "id": 1
+  }'
+```
+
+See [M2M Authentication](/agents/authentication#m2m-machine-to-machine) for full details and free trial quota.
+
+## Try Your First Tool
+
+Once connected, try these in any order:
+
+```
+# See what rubrics are available for pitch deck scoring
+list_rubric_templates()
+
+# Create a workspace for a deal
+create_deal_workspace(clientName: "Demo Deal")
+
+# Check the agents you have available
+(list tools in your MCP client)
+```
+
+<Note>
+New accounts get a free tier automatically — 15 pitch deck prechecks, 3 IC memos, and more each month. No payment setup required to start.
+</Note>
+
+## Production vs Development
+
+| Environment | MCP Endpoint | Use For |
+|-------------|-------------|---------|
+| Production | `https://agents.securelend.ai/mcp` | Live workflows |
+| Development | `https://agents.dev.securelend.ai/mcp` | Testing and integration |
+
+Both environments require authentication. Free tier applies to both.
