@@ -22,7 +22,7 @@
       },
       {
         "group": "SDKs",
-        "pages": ["sdk/overview", "sdk/javascript", "sdk/python", "sdk/langchain", "sdk/examples"]
+        "pages": ["sdk/overview", "sdk/javascript", "sdk/examples"]
       },
       {
         "group": "AI Agents",
