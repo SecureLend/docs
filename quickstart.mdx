@@ -1,66 +1,44 @@
 ---
 title: Quickstart
+description: Install @securelend/sdk 0.1.0-beta.5 and call compareBusinessLoans.
 ---
 
-This quickstart is the TypeScript SDK for the consumer marketplace at `https://mcp.securelend.ai/mcp`. It is not the underwriting server. For underwriting, use the [Lender MCP](/mcp/lender).
+This page is the published TypeScript client for the consumer marketplace at `https://mcp.securelend.ai/mcp`. Underwriting is the [Lender MCP](/mcp/lender).
+
+`npm install @securelend/sdk` resolves to `0.1.0-beta.5` on the npm registry. That is the package these snippets use. The SecureLend/sdk git branch is ahead of that tarball. See [SDK overview](/sdk/overview).
 
 There is no public price. [Start a 7-day trial](https://securelend.ai/login?trial=1) or [talk to us](https://securelend.ai/contact).
 
-This guide will get you up and running with the SecureLend SDK.
-
-## Installation
-
-First, install the SDK using your favorite package manager.
+## Install
 
 ```bash
 npm install @securelend/sdk
 ```
 
-## Example: Get Loan Offers
+## Compare business loans
 
-Here's a runnable example to fetch loan offers. Make sure to replace `'YOUR_API_KEY'` with your actual key.
+`compareBusinessLoans` takes `loanAmount` and `purpose`. `annualRevenue`, `industry`, and `state` are optional. The type has no `creditScore` field. The client does not require an `apiKey`.
 
-```javascript
-import { SecureLend } from '@securelend/sdk';
+This snippet typechecks against `@securelend/sdk@0.1.0-beta.5`. It was not executed against the live server.
 
-const client = new SecureLend({
-  apiKey: 'YOUR_API_KEY',
+```typescript
+import { SecureLend } from "@securelend/sdk";
+
+const client = new SecureLend();
+
+const result = await client.compareBusinessLoans({
+  loanAmount: 200000,
+  purpose: "equipment",
+  annualRevenue: 1200000,
+  industry: "technology",
+  state: "CA",
 });
 
-async function getOffers() {
-  try {
-    const offers = await client.getLoanOffers({
-      amount: 50000,
-      term: 12, // in months
-      businessType: 'SaaS',
-    });
-    console.log('Successfully fetched offers:', offers);
-    return offers;
-  } catch (error) {
-    console.error('Failed to fetch offers:', error);
-  }
-}
-
-getOffers();
+const count = result.summary.totalOffers;
+const first = result.offers[0];
+const apr = first && first.terms.interestRate.apr;
 ```
 
-## Expected Output
+`result.offers` is an array of `LoanOffer`. A rate lives at `terms.interestRate.apr`, not on a flat `interestRate` field. The full method list is the [JavaScript reference](/sdk/javascript).
 
-If successful, you will see a list of loan offers logged to your console.
-
-```json
-Successfully fetched offers: [
-  {
-    "lender": "Lender A",
-    "amount": 50000,
-    "interestRate": 0.05,
-    "term": 12
-  },
-  {
-    "lender": "Lender B",
-    "amount": 50000,
-    "interestRate": 0.055,
-    "term": 12
-  }
-]
-```
+The live marketplace `tools/list` schema for `compare_business_loans` is an open object. It does not list these fields as required. The SDK type is stricter than that schema.

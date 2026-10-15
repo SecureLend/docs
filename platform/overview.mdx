@@ -1,22 +1,14 @@
 ---
-title: Platform Overview
+title: Platform overview
 ---
 
-This document provides a high-level overview of the SecureLend platform architecture and core principles.
+SecureLend, Inc. is a US (Delaware) company. Two public surfaces are documented here:
 
-Underwriting over MCP is the [Lender MCP](/mcp/lender). The [Loans API](/api/loans) page is still a placeholder. The steps below describe offer matching. They were not re-tested for this update.
+- Underwriting MCP: [Lender MCP](/mcp/lender), `https://mcp.securelend.ai/v1/lender/mcp`
+- Consumer marketplace MCP and the published TypeScript client: [SDK overview](/sdk/overview)
 
-## High-Level Flow
-1.  **Authentication**: Your application authenticates with our API using a secure key.
-2.  **Request**: You send a request to find loan offers, providing business and loan criteria.
-3.  **Matching**: Our platform matches the request with offers from our network of lenders.
-4.  **Response**: We return a list of eligible offers to your application.
-5.  **Application**: You can then submit a formal application for a chosen offer.
+The public [SecureLend/securelend](https://github.com/SecureLend/securelend) repository defines ops routes such as `/api/v1/agents`, `/api/v1/approvals`, `/api/v1/costs`, `/api/v1/kpis/sources`, and `/api/v1/finance/overview` in `packages/ops-cdk/src/lambdas/api.ts`. It does not define a public loans-offer HTTP API in that file.
 
-## Sandbox vs. production
+`https://github.com/orgtom78/securelend-platform` could not be read from this environment (the repository was not found). Claims about live API routes in that repository are not made on this page.
 
-This page used to describe a sandbox of synthetic data and a production environment that opens after an integration review. Those two environments were not re-checked on 15 October 2026, so the details are not restated as current.
-
-## Trust and guarantees
-
-Encryption, access control, and uptime claims were not re-checked for this update. Customer security material stays on [Security](/platform/security).
+An offer-matching flowchart, a sandbox of synthetic data, and encryption guarantees used to be stated here. They are not restated, because those details were not found in the public code that was read.

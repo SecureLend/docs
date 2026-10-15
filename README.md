@@ -1,19 +1,19 @@
 # SecureLend Documentation
 
-This repository contains the official SecureLend developer documentation, powered by Mintlify.
-
-📚 Live docs: https://docs.securelend.ai
+This repository is the Mintlify source for https://docs.securelend.ai.
 
 ## Structure
+
 - Lender MCP for underwriting
 - Consumer marketplace MCP
-- SDK documentation for the marketplace client
-- Platform, API placeholders, and guides
+- SDK reference for the published `@securelend/sdk` package
+- Short platform and API notes
 
 ## Editing docs
-- All docs are written in MDX
-- Navigation is defined in `docs.json`
-- Changes to `main` deploy automatically
 
-## Local preview (optional)
+- Pages are MDX
+- Navigation and redirects are in `docs.json`
+
+## Local preview
+
 https://mintlify.com/docs/preview

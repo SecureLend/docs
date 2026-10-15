@@ -15,7 +15,9 @@ Checked on 15 October 2026. No tool was called.
 - `tools/list` without a bearer token returned the 20 tools below.
 - GET returned 404 and `{"error":"not_found"}`. A browser visit is not an MCP session.
 
-The TypeScript pages in this site describe a client aimed at this URL. See [SDK overview](/sdk/overview). Those pages were not re-tested by calling a tool.
+The 14 comparison and calculator tools advertise `inputSchema` as `{ "type": "object", "additionalProperties": true }` with no `properties` and no `required` list. `get_offer` and `get_multiple_offers` require `applicant`.
+
+The published TypeScript client is [SDK overview](/sdk/overview). Its types are stricter than those live schemas, and `getOffer` uses different field names. No marketplace tool was called.
 
 There is no public price. [Start a 7-day trial](https://securelend.ai/login?trial=1) or [talk to us](https://securelend.ai/contact).
 
