@@ -13,7 +13,11 @@ description: Error classes exported by @securelend/sdk 0.1.0-beta.5.
 - `NetworkError` (`type` `network_error`)
 - `ServerError` (`type` `server_error`)
 
-In the published `dist/index.js`, the MCP client throws `AuthenticationError` when a connection error message contains `401`, `NetworkError` for other connection failures, `ValidationError` when a tool error message contains `400` or the response fails schema parsing, and `SecureLendError` for other tool failures.
+In the published `dist/index.js`, the client throws `AuthenticationError` when a connection error message contains `401`, and `NetworkError` for other connection failures.
+
+`ValidationError` is thrown only in two cases. `schema.parse` throwing a `ZodError` becomes `ValidationError` (`Invalid response from MCP server: failed to validate JSON content`). The inner `callTool` throws `ValidationError` (`Invalid tool arguments`) when a caught error message contains `400`.
+
+A response with no `structuredContent` and no `text` or `application/json` content item, a `JSON.parse` throw, or an invalid content structure becomes `SecureLendError` with type `mcp_error` (`Invalid response from MCP server: failed to parse JSON content`). Other tool failures become `SecureLendError` with type `mcp_tool_error`.
 
 `RateLimitError`, `NotFoundError`, and `ServerError` are exported. That file does not construct them. The client does not retry. No requests-per-minute figure is published in the package.
 

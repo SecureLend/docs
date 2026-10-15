@@ -44,7 +44,7 @@ An OAuth login was not completed, so this page does not claim which calls succee
 
 ## Tools
 
-Wording below follows the `description` and `inputSchema` from `tools/list`. Required fields are the schema's `required` list.
+Wording below follows the `description` and `inputSchema` from `tools/list`. Required fields are the schema's `required` list. Every one of the 11 tool schemas sets `additionalProperties` to `false` on the root object. The `guarantees` item object, below, does not set that keyword.
 
 ### resolve_listed_company
 
@@ -106,7 +106,11 @@ Open an underwriting package and return the desk URL, `dashboardUrl`, and `expor
 
 Required: `borrower`, `amount`, `currency`, `security` (`unsecured` or `secured`). The description says a secured loan also needs a complete guarantee.
 
+`borrower` is a string. The schema description says: "Legal name, ticker, or both. NASDAQ: OPTX and a trailing (OPTX) are the listed issuer. A private company name returns connectUrl and sources."
+
 Optional: `guarantees`, `purpose`, `tenorMonths`, `amortisation`, `pricing`. Here `pricing` is a string on the loan request. It is not a SecureLend fee.
+
+`guarantees` is an array of objects. Each item requires `type`: `personal_guarantee`, `corporate_or_parent`, `blanket_lien`, `asset`, or `government_guarantee`. Optional item fields are `who` (string), `limited` (boolean), `asset` (string), and `program` (string).
 
 The description also says: the first listed package can run once without an account; a name that is not an SEC-listed issuer does not open a file until a private-company source is connected; send the user to `connectUrl`; they choose a source and save the key in the browser; do not ask for a key in the chat; do not draft figures.
 

@@ -5,17 +5,25 @@ description: Methods and types in @securelend/sdk 0.1.0-beta.5.
 
 This page is `@securelend/sdk@0.1.0-beta.5`, the package `npm install @securelend/sdk` installs. It is not the `0.2.0-beta.0` git tree. See [SDK overview](/sdk/overview).
 
-Parameter lists below are the published TypeScript types. The live marketplace `tools/list` schema for the comparison and calculator tools is an open object with no `properties` and no `required` list. The SDK types are stricter than that live schema. No tool was called.
+Parameter lists below are the published TypeScript types. On the live marketplace `tools/list`, 18 of 20 tools advertise an open object (`additionalProperties: true`) with no `properties` and no `required` list. That includes the comparison and calculator tools and also `display_offer_form`, `track_offer_status`, `display_upload_documents_form`, and `submit_documents`. Only `get_offer` and `get_multiple_offers` publish `properties`, and both require `applicant`. The SDK types are stricter than those live schemas. No tool was called.
 
 `new SecureLend()` uses `https://mcp.securelend.ai/mcp` when `serverUrl` is omitted. `apiKey` is optional and is not attached as an `Authorization` header by the published transport.
 
 ## Loan comparison
 
-Each method returns `LoanComparisonResponse`: `offers` (`LoanOffer[]`), `summary` (`totalOffers`, `bestRate`, optional `bestApprovalProbability`, optional `fastestFunding`), optional `searchCriteria`, and `metadata` (`queryId`, `timestamp`, optional `sessionId`).
+Each method returns `LoanComparisonResponse`: `offers` (`LoanOffer[]`), `summary` (`totalOffers`, `bestRate`, optional `bestApprovalProbability`, optional `fastestFunding`), optional `searchCriteria`, `metadata` (`queryId`, `timestamp`, optional `sessionId`), and optional `widget`.
 
-A `LoanOffer` has `offerId`, `lender` (`id`, `name`, `type`, optional `logoUrl`), `product` (`name`, `type`, optional `description`), `terms`, optional `fees`, optional `matching`, and optional `process`. `terms.interestRate` is `{ type: "fixed" | "variable"; apr: number; rate?: number }`. `terms.amount` and `terms.payment.amount` are `{ amount: number; currency?: string }`. `terms.termMonths` is a number.
+A `LoanOffer` has `offerId`, `lender` (`id`, `name`, `type`, optional `logoUrl`), `product` (`name`, `type`, optional `description`), `terms`, optional `fees`, optional `matching`, optional `process`, optional `lenderInfo` (string), optional `badges` (string array), and optional `isSecureLendTenant` (boolean).
 
-`matching.approvalProbability` is optional, from 0 to 1 on the SDK schema. There is no `lenderName`, `interestRate` number, `monthlyPayment`, or `approvalLikelihood` field on `LoanOffer`.
+`terms.interestRate` is `{ type: "fixed" | "variable"; apr: number; rate?: number }`. `terms.amount` is money: `{ amount: number; currency?: string }` with `currency` length 3 when present. `terms.termMonths` is an integer. `terms.payment` is `{ frequency?: string; amount: money }`. `terms.totalCost` is optional money. `terms.repayment` is optional `{ totalRepaymentAmount: number; costOfFinancing: number }`.
+
+`fees`, when present, has optional `origination`. That object has optional `amount` (money) and optional `percentage` (number).
+
+`matching`, when present, has optional `approvalProbability` (0 to 1), optional `matchScore` (0 to 100), and optional `matchReasons` (string array).
+
+`process`, when present, requires `applicationMethod` (string) and may include `applicationUrl` and `fundingSpeed.description`.
+
+There is no `lenderName`, flat `interestRate` number, `monthlyPayment`, or `approvalLikelihood` field on `LoanOffer`.
 
 ### comparePersonalLoans
 
@@ -55,7 +63,7 @@ Optional: `creditScore`, `coSignerCreditScore`, `state`.
 
 ### compareBusinessBanking
 
-Optional: `industry`, `monthlyTransactions`. Returns `offers` of `accountId`, `name`, `issuer`, `imageUrl`, `rating`, `bestFor`, `apy`, optional `interestRate`, `monthlyFee`, `bonus`, plus optional `searchCriteria` and `metadata`.
+Optional: `industry`, `monthlyTransactions`. Returns `offers` of `accountId`, `name`, `issuer`, `imageUrl`, `rating`, `bestFor`, `apy`, optional `interestRate`, `monthlyFee`, `bonus`, plus optional `searchCriteria`, `metadata`, and optional `widget`.
 
 ### comparePersonalBanking
 
@@ -67,11 +75,19 @@ Optional: `initialDeposit`. Offer fields include `minBalanceForApy` and `monthly
 
 ### compareBusinessCreditCards
 
-Optional: `creditScore`, `annualRevenue`, `businessAgeInYears`.
+All fields are optional. `creditScore` is 300 to 850. `annualRevenue` minimum is 0. `businessAgeInYears` minimum is 0.
+
+Returns `BusinessCreditCardComparisonResponse`: `offers`, optional `searchCriteria`, `metadata` (`queryId`, `timestamp`, optional `sessionId`), optional `widget`.
+
+Each offer has `cardId`, `name`, `issuer`, `imageUrl`, `rating` (0 to 5), `creditScoreRange`, `welcomeBonus`, and `terms`. `terms.apr` and `terms.annualFee` are numbers. `terms.creditLimit` is money (`amount`, optional `currency` of length 3).
 
 ### comparePersonalCreditCards
 
-Optional: `creditScore`, `rewardsType` (`cash_back`, `travel`, `points`).
+All fields are optional. `creditScore` is 300 to 850. `rewardsType` is `cash_back`, `travel`, or `points`.
+
+Returns `PersonalCreditCardComparisonResponse` with the same wrapper as the business card response: `offers`, optional `searchCriteria`, `metadata`, optional `widget`.
+
+Each offer has `cardId`, `name`, `issuer`, `imageUrl`, `rating` (0 to 5), `bestFor`, `rewardsRate`, `introOffer`, `recommendedCreditScore`, `terms`, and optional `applicationUrl`. `terms.apr.purchase` and `terms.apr.balanceTransfer` are numbers. `terms.apr.penalty` is optional. `terms.fees.annual` is a number.
 
 ## Calculators
 
@@ -79,13 +95,13 @@ Optional: `creditScore`, `rewardsType` (`cash_back`, `travel`, `points`).
 
 Required: `loanAmount`, `interestRate`, `loanTermInMonths`.
 
-Returns `monthlyPayment`, `totalPayment`, `totalInterest`.
+Returns `monthlyPayment`, `totalPayment`, `totalInterest`, and optional `widget`.
 
 ### calculateMortgagePayment
 
 Required: `propertyValue`, `downPayment`, `interestRate`, `loanTermInYears`, `propertyTaxRate`, `homeInsurance`.
 
-Returns `loanAmount`, `principalAndInterest`, `monthlyPropertyTax`, `monthlyHomeInsurance`, `totalMonthlyPayment`.
+Returns `loanAmount`, `principalAndInterest`, `monthlyPropertyTax`, `monthlyHomeInsurance`, `totalMonthlyPayment`, and optional `widget`.
 
 ### compareLeaseVsPurchase
 
@@ -93,7 +109,7 @@ Required on the SDK input type: `purchasePrice`, `downPayment`, `loanTermInMonth
 
 `acquisitionFee` and `securityDeposit` default to 0.
 
-Returns `purchaseAnalysis`, `leaseAnalysis`, and `comparison`.
+Returns `purchaseAnalysis`, `leaseAnalysis`, `comparison`, and optional `widget`.
 
 ## Applications
 
@@ -105,23 +121,29 @@ Required by the SDK type: `productType`, `applicant` (`firstName`, `lastName`, `
 
 `productType` is one of `INSTALLMENT_LOAN`, `LINE_OF_CREDIT`, `SHORT_TERM_CREDIT`, `BNPL`, `MORTGAGE`, `AUTO_LOAN`, `AUTO_REFINANCE`, `STUDENT_LOAN`, `STUDENT_LOAN_REFINANCE`, `BUSINESS_LOAN`, `BUSINESS_BANKING`, `BUSINESS_CREDIT_CARD`, `PERSONAL_BANKING`, `SAVINGS_ACCOUNT`, `PERSONAL_CREDIT_CARD`.
 
-Returns `PersonalApplication` (`id`, `createdAt`, `updatedAt`, `applicationType`, `productType`, `status`, `applicant`, `applicationData`, `providers`, `email`).
+Returns `PersonalApplication` (`id`, `createdAt`, `updatedAt`, `applicationType`, `productType`, `status`, `applicant`, `applicationData`, `providers`, `email`, optional `widget`).
 
 ### getMultipleOffers
 
-Same applicant and `productType`, plus `applicationData` and `providers` (at least one `{ providerId, providerName }` on the SDK schema).
+Same applicant and `productType`, plus `applicationData` and `providers` (at least one `{ providerId, providerName }` on the SDK schema). Returns the same `PersonalApplication`.
 
 ### displayOfferForm
 
 Optional: `sessionId`, `offerId`.
 
+Returns `DisplayOfferFormResponse`: `offer` and `allOffers` (each item is a loan, business card, business banking, personal banking, savings, or personal card offer), `applicationData` (object that allows extra keys), `productType` (string), optional `widget`.
+
 ### trackOfferStatus
 
 The SDK schema requires `applicationId` or `email`.
 
+Returns `TrackOfferStatusResponse`: `applications` (`PersonalApplication[]`) and optional `widget`.
+
 ### displayUploadDocumentsForm
 
 Optional: `applicationId`.
+
+Returns `DisplayUploadDocumentsFormResponse`: optional `widget` only.
 
 ### submitDocuments
 
@@ -129,9 +151,44 @@ Required by the SDK type: `applicationId`, `fileName`, `documentType`. Optional 
 
 `documentType` is one of `articles-of-incorporation`, `balance-sheet`, `bank-statement`, `business-license`, `business-plan`, `contract`, `drivers-license`, `financial-statement`, `identity-document`, `invoice`, `lease-agreement`, `other-business-document`, `other-personal-document`, `passport`, `profit-and-loss-statement`, `proof-of-address`, `proof-of-income`, `property-document`, `purchase-order`, `tax-return`, `utility-bill`, `vehicle-document`, `voided-check`.
 
-## Client methods
+Returns `SubmitDocumentsResponse`: `success` (boolean), `message` (string), optional `uploadUrl`, optional `uploadFields` (record of string to string), optional `documentId`, optional `widget`.
+
+## Runtime enums
+
+These five are runtime exports in `dist/index.js`, not type-only aliases.
+
+- `CreditTier`: `PRIME`, `NEAR_PRIME`, `SUBPRIME`, `DEEP_SUBPRIME`, `UNKNOWN`
+- `ProductType`: the 15 values listed under `getOffer`
+- `ApplicationType`: `PERSONAL`, `BUSINESS`
+- `ApplicationStatus`: `DRAFT`, `SUBMITTED`, `IN_REVIEW`, `ACTION_REQUIRED`, `APPROVED`, `DECLINED`, `CLOSED`
+- `ProviderStatus`: `PENDING`, `SUBMITTED`, `REFERRED`, `ERROR`, `RECEIVED`
+
+## Exported zod schemas
+
+The package re-exports these schemas from `dist/types/index.js`: `anyOfferSchema`, `applicationProviderSchema`, `autoLoanSearchSchema`, `bankAccountOfferSchema`, `businessApplicantSchema`, `businessBankingComparisonResponseSchema`, `businessBankingOfferSchema`, `businessBankingSearchSchema`, `businessCreditCardComparisonResponseSchema`, `businessCreditCardOfferSchema`, `businessCreditCardSearchSchema`, `businessLoanSearchSchema`, `createBusinessApplicationSchema`, `createPersonalApplicationSchema`, `creditCardOfferSchema`, `displayOfferFormResponseSchema`, `displayOfferFormSchema`, `displayUploadDocumentsFormResponseSchema`, `displayUploadDocumentsFormSchema`, `documentTypeEnum`, `getMultipleOffersSchema`, `getOfferSchema`, `leaseVsPurchaseResponseSchema`, `leaseVsPurchaseSchema`, `loanComparisonResponseSchema`, `loanOfferSchema`, `loanPaymentResponseSchema`, `loanPaymentSchema`, `mortgagePaymentResponseSchema`, `mortgagePaymentSchema`, `mortgageSearchSchema`, `personalApplicantSchema`, `personalApplicationSchema`, `personalBankingComparisonResponseSchema`, `personalBankingOfferSchema`, `personalBankingSearchSchema`, `personalCreditCardComparisonResponseSchema`, `personalCreditCardOfferSchema`, `personalCreditCardSearchSchema`, `personalLoanSearchSchema`, `savingsComparisonResponseSchema`, `savingsOfferSchema`, `savingsSearchSchema`, `studentLoanSearchSchema`, `submitDocumentsResponseSchema`, `submitDocumentsSchema`, `trackOfferStatusResponseSchema`, `trackOfferStatusSchema`.
+
+## Adapters and application DTOs
+
+Each adapter interface has `readonly name: string` and a `search` method.
+
+- `PersonalLenderAdapter`, `BusinessLenderAdapter`, `MortgageLenderAdapter`, `AutoLenderAdapter`, and `StudentLenderAdapter` return `LoanOffer[]`.
+- `BusinessCreditCardAdapter` returns `BusinessCreditCardOffer[]`. `PersonalCreditCardAdapter` returns `PersonalCreditCardOffer[]`.
+- `BusinessBankingAdapter` search accepts the business banking search fields plus optional `maxResults` and `includeReviewStatus`. It returns `BusinessBankingOffer[]`.
+- `PersonalBankingAdapter` returns `PersonalBankingOffer[]`. `SavingsAdapter` returns `SavingsOffer[]`.
+
+`CreatePersonalApplicationDTO` is `productType`, `applicant` (`firstName`, `lastName`, `email`, optional `phone`), `applicationData`, and optional `providers` (`providerId`, `providerName`).
+
+`CreateBusinessApplicationDTO` uses the same `productType`, `applicationData`, and optional `providers`. Its `applicant` is `businessName`, optional `ein`, and `contact` (the personal applicant fields).
+
+## Client
 
 `connect()`, `enableDebug()`, `disableDebug()`, and `setApiKey(apiKey: string)` are on the class. `setApiKey` updates the stored key and marks the MCP client disconnected. The next call constructs a new transport from the URL only.
+
+`client.mcp` is a public readonly field. It is the `Client` from `@modelcontextprotocol/sdk` (`name` `@securelend/sdk`, `version` `1.0.0`). The constructor assigns `this.mcp` from the inner transport.
+
+Every method goes through `callTool`, which returns the parsed object plus `widget`. `getWidget` sets `widget` to the `text` of a content resource whose mime type is `text/html`. If that resource is absent, `widget` is `undefined`. Every published response schema includes optional `widget` as a string.
+
+`parseJsonResponse` uses `structuredContent` when it is present. Otherwise it takes the first content item that is an `application/json` resource or a `text` item, then `JSON.parse`s that text. `schema.parse` runs on the resulting value.
 
 The published `package.json` sets `engines.node` to `>=16.0.0`. This page does not claim a browser, edge, or React Server Components runtime. The client does rewrite a `serverUrl` that starts with `/` when `window` is defined. That branch was not run in a browser.
 
@@ -139,4 +196,10 @@ The published `package.json` sets `engines.node` to `>=16.0.0`. This page does n
 
 Exported classes in this version: `SecureLendError`, `AuthenticationError`, `RateLimitError`, `ValidationError`, `NotFoundError`, `NetworkError`, `ServerError`.
 
-The published MCP client throws `AuthenticationError` when a connection error message contains `401`, `NetworkError` for other connection failures, `ValidationError` when a tool error message contains `400` or the JSON fails the response schema, and `SecureLendError` for other tool failures. `RateLimitError`, `NotFoundError`, and `ServerError` are exported and are not constructed in the published `dist/index.js`. There is no retry loop and no published requests-per-minute figure.
+The published client throws `AuthenticationError` when a connection error message contains `401`, and `NetworkError` for other connection failures.
+
+`ValidationError` is thrown in two places in `dist/index.js`. If `schema.parse` throws a `ZodError`, the client throws `ValidationError` with message `Invalid response from MCP server: failed to validate JSON content`. The inner `callTool` throws `ValidationError` (`Invalid tool arguments`) when a caught error message contains `400`.
+
+A tool result with no `structuredContent` and no `text` or `application/json` content item, a `JSON.parse` failure, or an invalid content structure is caught and rethrown as `SecureLendError` with type `mcp_error` and message `Invalid response from MCP server: failed to parse JSON content`. Other tool failures become `SecureLendError` with type `mcp_tool_error`.
+
+`RateLimitError`, `NotFoundError`, and `ServerError` are exported and are not constructed in the published `dist/index.js`. There is no retry loop and no published requests-per-minute figure. `signOutcomePayload`, `FeatureDisabledError`, `ConsentRequiredError`, and `InvalidTransitionError` are not in this tarball. See [Webhooks](/api/webhooks).

@@ -19,14 +19,14 @@ The default `serverUrl` in the published `dist/index.js` is `https://mcp.securel
 
 The class exposes 20 marketplace tools, plus `connect()`, `enableDebug()`, `disableDebug()`, and `setApiKey()`. Names and parameter types are on the [JavaScript reference](/sdk/javascript). A short typed example is the [quickstart](/quickstart).
 
-The SDK parses tool results with zod. If the server returns a different shape, the client throws `ValidationError`. That path was not executed against the live server.
+The SDK reads `structuredContent` first, then a JSON content item, and validates with zod. A `ZodError` from `schema.parse` becomes `ValidationError`. Missing JSON content, a `JSON.parse` failure, or an invalid content structure becomes `SecureLendError` with type `mcp_error`. The class also exposes `client.mcp`, the raw MCP `Client`. Every method return includes optional `widget`. Names, enums, schemas, and response shapes are on the [JavaScript reference](/sdk/javascript). That parse path was not executed against the live server.
 
 ## Other published packages
 
 Checked on the public registries, not by running them:
 
 - `@securelend/react@0.1.0-beta.5` exports `SecureLendProvider`, `useSecureLend`, `useLoanComparison`, `useBankingComparison`, `useCreditCardComparison`, `useDisplayOfferForm`, `useSubmitApplication`, and `SecureLendWidget`. Peer dependency is `@securelend/sdk@^0.1.0-beta.5` and React 18 or newer.
-- `@securelend/widgets@0.1.0-beta.5` is on npm. Its components are not listed on this page.
+- `@securelend/widgets@0.1.0-beta.5` is on npm. The tarball `gitHead` is `0eadabc6c7cf929706f4ba41a818f2fa28842123`. `dist/index.d.ts` exports `LoanComparisonWidget`, `BankingComparisonWidget`, `CreditCardComparisonWidget`, and `ApplicationFormWidget`. Peer dependencies in that `package.json` are `@securelend/react` `^0.1.0-beta.5`, `@securelend/sdk` `^0.1.0-beta.5`, `react` `>=18.0.0`, and `react-dom` `>=18.0.0`. These components were not rendered for this page.
 - PyPI `securelend` `0.1.0` is a Python client with the same 20 tools in snake_case (`compare_business_loans` and the rest). `api_key` is optional. The default server URL is the same marketplace host. The git copy of `packages/python` is version `0.2.0`, which is not what `pip install securelend` returns.
 
 The git branch also exports React hooks `useLead`, `useLeadOutcomes`, and `useShareConsent`. Those names are not in the published `0.1.0-beta.5` tarball.
