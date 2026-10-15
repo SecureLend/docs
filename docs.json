@@ -45,11 +45,11 @@
     },
     {
       "source": "/agents/quickstart",
-      "destination": "/mcp/lender"
+      "destination": "/quickstart"
     },
     {
       "source": "/agents/authentication",
-      "destination": "/mcp/lender"
+      "destination": "/authentication"
     },
     {
       "source": "/agents/tools",
@@ -57,7 +57,7 @@
     },
     {
       "source": "/agents/pricing",
-      "destination": "/mcp/lender"
+      "destination": "/"
     },
     {
       "source": "/mcp/overview",
