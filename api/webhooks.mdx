@@ -1,5 +1,11 @@
 ---
-title: Webhooks API
+title: Webhooks
 ---
 
-Coming soon.
+`@securelend/sdk@0.1.0-beta.5` does not export webhook helpers.
+
+The default branch of SecureLend/sdk exports `verifyWebhook`, `parseEvent`, `signWebhook`, and `signOutcomePayload` from `packages/sdk/src/webhooks.ts`, and `WebhookSignatureError`, `FeatureDisabledError`, `ConsentRequiredError`, and `InvalidTransitionError` from `packages/sdk/src/utils/errors.ts`. That code is in package version `0.2.0-beta.0`, which is not the published tarball. None of those names are in `@securelend/sdk@0.1.0-beta.5`.
+
+`signOutcomePayload` is the unpublished helper whose source comment says it builds the header for `POST /v1/webhooks/lender-outcomes`: SHA-256 of the secret, a `.`, and the raw body, returned as `sha256=` plus the hex digest. The same comment says the live route does not check a timestamp. Signing and verification were not executed for this page, and that route was not called.
+
+The three extra error classes are also unpublished. `FeatureDisabledError` uses type `feature_disabled`. `ConsentRequiredError` uses type `consent_required`. `InvalidTransitionError` uses type `invalid_transition`. They were not thrown against a live server for this page.

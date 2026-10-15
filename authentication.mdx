@@ -2,4 +2,14 @@
 title: Authentication
 ---
 
-Coming soon.
+## Published marketplace client
+
+`@securelend/sdk@0.1.0-beta.5` accepts an optional `apiKey` on `new SecureLend({ apiKey, serverUrl })`. The published `dist/index.js` stores that string and opens the MCP transport with the URL only. It does not set an `Authorization` header there.
+
+`tools/list` on `https://mcp.securelend.ai/mcp` answered without a bearer token on 15 October 2026. A marketplace tool was not called.
+
+## Lender MCP
+
+OAuth 2.0 with PKCE for `https://mcp.securelend.ai/v1/lender/mcp` is on the [Lender MCP](/mcp/lender) page. The authorization server metadata lists code challenge method `S256`. An OAuth login was not completed.
+
+A loans HTTP API key scheme is not documented here. No such route was found in the public SecureLend/securelend repository, and the platform repository could not be read.

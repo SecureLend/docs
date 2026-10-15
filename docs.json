@@ -21,28 +21,12 @@
         "pages": ["platform/environments", "platform/security"]
       },
       {
+        "group": "MCP",
+        "pages": ["mcp/lender", "mcp/marketplace"]
+      },
+      {
         "group": "SDKs",
         "pages": ["sdk/overview", "sdk/javascript", "sdk/examples"]
-      },
-      {
-        "group": "AI Agents",
-        "pages": [
-          "agents/overview",
-          "agents/quickstart",
-          "agents/authentication",
-          "agents/tools",
-          "agents/pricing"
-        ]
-      },
-      {
-        "group": "MCP Integrations",
-        "protected": true,
-        "pages": [
-          "mcp/overview",
-          "mcp/setup",
-          "mcp/tools",
-          "mcp/financial-services"
-        ]
       },
       {
         "group": "APIs",
@@ -53,5 +37,43 @@
         "pages": ["guides/errors"]
       }
     ]
-  }
+  },
+  "redirects": [
+    {
+      "source": "/agents/overview",
+      "destination": "/mcp/lender"
+    },
+    {
+      "source": "/agents/quickstart",
+      "destination": "/quickstart"
+    },
+    {
+      "source": "/agents/authentication",
+      "destination": "/authentication"
+    },
+    {
+      "source": "/agents/tools",
+      "destination": "/mcp/lender"
+    },
+    {
+      "source": "/agents/pricing",
+      "destination": "/"
+    },
+    {
+      "source": "/mcp/overview",
+      "destination": "/mcp/lender"
+    },
+    {
+      "source": "/mcp/setup",
+      "destination": "/mcp/lender"
+    },
+    {
+      "source": "/mcp/tools",
+      "destination": "/mcp/marketplace"
+    },
+    {
+      "source": "/mcp/financial-services",
+      "destination": "/mcp/marketplace"
+    }
+  ]
 }

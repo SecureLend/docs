@@ -1,34 +1,46 @@
 ---
-title: Error Handling
+title: Error handling
+description: Error classes exported by @securelend/sdk 0.1.0-beta.5.
 ---
 
-Our API uses standard HTTP response codes to indicate the success or failure of a request. Errors will be returned with a JSON body containing more details.
+`@securelend/sdk@0.1.0-beta.5` exports these classes:
 
-## Error Format
+- `SecureLendError`, with `type` and optional `details`
+- `AuthenticationError` (`type` `authentication_error`)
+- `RateLimitError` (`type` `rate_limit_error`, optional `retryAfter`)
+- `ValidationError` (`type` `validation_error`)
+- `NotFoundError` (`type` `not_found`)
+- `NetworkError` (`type` `network_error`)
+- `ServerError` (`type` `server_error`)
 
-```json
-{
-  "code": "INVALID_INPUT",
-  "message": "amount must be greater than 0"
+In the published `dist/index.js`, the client throws `AuthenticationError` when a connection error message contains `401`, and `NetworkError` for other connection failures.
+
+`ValidationError` is thrown only in two cases. `schema.parse` throwing a `ZodError` becomes `ValidationError` (`Invalid response from MCP server: failed to validate JSON content`). The inner `callTool` throws `ValidationError` (`Invalid tool arguments`) when a caught error message contains `400`.
+
+A response with no `structuredContent` and no `text` or `application/json` content item, a `JSON.parse` throw, or an invalid content structure becomes `SecureLendError` with type `mcp_error` (`Invalid response from MCP server: failed to parse JSON content`). Other tool failures become `SecureLendError` with type `mcp_tool_error`.
+
+`RateLimitError`, `NotFoundError`, and `ServerError` are exported. That file does not construct them. The client does not retry. No requests-per-minute figure is published in the package.
+
+```typescript
+import {
+  AuthenticationError,
+  SecureLendError,
+  ValidationError,
+} from "@securelend/sdk";
+
+try {
+  // call a method from the JavaScript reference
+} catch (error) {
+  if (error instanceof AuthenticationError) {
+    console.error(error.message);
+  } else if (error instanceof ValidationError) {
+    console.error(error.message);
+  } else if (error instanceof SecureLendError) {
+    console.error(error.type, error.message);
+  } else {
+    throw error;
+  }
 }
 ```
 
-## Common Errors
-<CardGroup>
-  <Card title="UNAUTHORIZED">
-    **Meaning**: Invalid API key provided. <br />
-    **Action**: Check that your `SECURELEND_API_KEY` environment variable is correct.
-  </Card>
-  <Card title="NO_OFFERS">
-    **Meaning**: No lenders matched the provided criteria. <br />
-    **Action**: Try adjusting the loan amount or other criteria.
-  </Card>
-  <Card title="INVALID_INPUT">
-    **Meaning**: One or more request parameters were invalid. <br />
-    **Action**: Check the `message` field for details on the specific error.
-  </Card>
-</CardGroup>
-
-## Retry vs. No-Retry
-- **Retry**: Network errors or `5xx` server errors can generally be retried. We recommend an exponential backoff strategy.
-- **Do Not Retry**: `4xx` client errors (like `INVALID_INPUT` or `UNAUTHORIZED`) should not be retried without first correcting the underlying issue in your request.
+Codes `INVALID_INPUT`, `NO_OFFERS`, and `UNAUTHORIZED` are not defined in the published SDK. A loans HTTP API that returns those codes was not found in the public SecureLend/securelend repository. The platform repository could not be read, so this page does not describe HTTP status codes for that API.

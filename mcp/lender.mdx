@@ -1,0 +1,176 @@
+---
+title: Lender MCP
+description: Underwriting MCP at mcp.securelend.ai/v1/lender/mcp. OAuth 2.0 with PKCE and 11 tools. No tool approves a loan.
+---
+
+SecureLend, Inc. is a US (Delaware) company. The public site lists 8 The Green, Dover, DE 19901. This page is the underwriting MCP for business clients.
+
+The server URL is `https://mcp.securelend.ai/v1/lender/mcp`.
+
+Checked on 15 October 2026. The checks were read-only: OAuth discovery documents, `initialize`, and `tools/list`. No tool was called.
+
+## What was returned
+
+`initialize` returned protocol `2025-03-26` and server info `securelend-lender` version `1.0.0`.
+
+`tools/list` returned 11 tools without a bearer token. A GET of the same URL, with no token, returned 401 and `{"error":"unauthenticated"}`. The 401 response observed here did not include a `WWW-Authenticate` header. Discovery is the well-known document below.
+
+## OAuth 2.0 with PKCE
+
+Protected resource metadata:
+
+`https://mcp.securelend.ai/.well-known/oauth-protected-resource`
+
+That document names the resource `https://mcp.securelend.ai/v1/lender/mcp`, scope `lender`, bearer method `header`, and authorization server `https://mcp.securelend.ai`.
+
+Authorization server metadata:
+
+`https://mcp.securelend.ai/.well-known/oauth-authorization-server`
+
+Observed fields:
+
+- Issuer: `https://mcp.securelend.ai`
+- Authorize: `https://mcp.securelend.ai/oauth/authorize`
+- Token: `https://mcp.securelend.ai/oauth/token`
+- Response type: `code`
+- Grant: `authorization_code`
+- Code challenge method: `S256` (PKCE)
+- Token endpoint auth method: `none`
+- Scope: `lender`
+
+The authorization server metadata has no `registration_endpoint`. This page does not claim that dynamic client registration works.
+
+An OAuth login was not completed, so this page does not claim which calls succeed with or without a token, beyond the `initialize` and `tools/list` calls above.
+
+## Tools
+
+Wording below follows the `description` and `inputSchema` from `tools/list`. Required fields are the schema's `required` list. Every one of the 11 tool schemas sets `additionalProperties` to `false` on the root object. The `guarantees` item object, below, does not set that keyword.
+
+### resolve_listed_company
+
+Resolve a ticker, legal name, or CIK. Writes nothing. Returns one chosen company or the candidates.
+
+Required: `query`, `asOf` (`YYYY-MM-DD`).
+
+### read_listed_company
+
+Read the annual filing on or before `asOf` and cite it on the caller's case. An ambiguous name writes nothing. Omit `caseId` to open or reuse the filing case.
+
+Required: `asOf`. Optional: `query`, `cik`, `caseId`.
+
+### open_case
+
+Open a case on the caller's tenant. The description says this is the same record as New file, and that any tenant id in the arguments is ignored.
+
+No required fields. Optional: `id`, `legalName`, `email`, `source`.
+
+### read_case
+
+Read one case: status, facts, evidence ids, gaps, recommendation, document file names and types, pending jobs, and memo id plus status. No storage keys.
+
+Required: `caseId`.
+
+### run_file
+
+Walk the file. The description says this is the same as Run file. It returns the job already running on this case. It does not attach a walk memo.
+
+Required: `caseId`.
+
+### run_pack
+
+Score the facts already on the case against the active pack. The description says this is the same as Run pack. It does not accept facts in the arguments. It returns `walk_pending` while a walk is running.
+
+Required: `caseId`. Optional: `event`.
+
+### chase_missing_documents
+
+Name every missing pack document and missing required number. When the file has a borrower email, it drafts a chase email and does not send it. If the same items are still missing, it returns the existing draft.
+
+Required: `caseId`.
+
+### screen_sanctions
+
+Screen a name on the case with OpenSanctions. The description says this is the same as Screen OpenSanctions, for `SANCTIONS` or `PEP`. A missing key writes nothing and does not pass the file.
+
+Required: `caseId`. Optional: `name`, `checkType` (`SANCTIONS` or `PEP`).
+
+### draft_memo_from_file
+
+Draft a credit memo from the case file. The description says this uses the same case id as Draft from file, the tenant model when one is saved, and otherwise the file template.
+
+Required: `caseId`.
+
+### start_underwriting_package
+
+Open an underwriting package and return the desk URL, `dashboardUrl`, and `exportUrl`. Checks run on their own. Does not approve the loan. `dashboardUrl` is the hosted package page. `exportUrl` is the zip.
+
+Required: `borrower`, `amount`, `currency`, `security` (`unsecured` or `secured`). The description says a secured loan also needs a complete guarantee.
+
+`borrower` is a string. The schema description says: "Legal name, ticker, or both. NASDAQ: OPTX and a trailing (OPTX) are the listed issuer. A private company name returns connectUrl and sources."
+
+Optional: `guarantees`, `purpose`, `tenorMonths`, `amortisation`, `pricing`. Here `pricing` is a string on the loan request. It is not a SecureLend fee.
+
+`guarantees` is an array of objects. Each item requires `type`: `personal_guarantee`, `corporate_or_parent`, `blanket_lien`, `asset`, or `government_guarantee`. Optional item fields are `who` (string), `limited` (boolean), `asset` (string), and `program` (string).
+
+The description also says: the first listed package can run once without an account; a name that is not an SEC-listed issuer does not open a file until a private-company source is connected; send the user to `connectUrl`; they choose a source and save the key in the browser; do not ask for a key in the chat; do not draft figures.
+
+That no-account path was not called.
+
+### read_package
+
+Read an underwriting package. Does not re-run the checks. Without a sign-in, pass the guest `packageId`. A workspace `caseId` requires the workspace.
+
+Optional: `packageId`, `caseId`. Neither is in the schema's `required` list.
+
+## Reads and writes
+
+This split follows the descriptions. It was not tested by calling the tools.
+
+Descriptions that say the tool writes nothing, or only reads:
+
+- `resolve_listed_company` writes nothing.
+- `read_case` reads one case.
+- `read_package` reads a package and does not re-run the checks.
+
+Descriptions that open a record, start work, or draft something:
+
+- `read_listed_company` can open or reuse a filing case when `caseId` is omitted.
+- `open_case` opens a case.
+- `run_file` walks the file.
+- `run_pack` scores facts already on the case.
+- `chase_missing_documents` drafts an email and does not send it.
+- `screen_sanctions` screens a name. A missing key writes nothing.
+- `draft_memo_from_file` drafts a credit memo.
+- `start_underwriting_package` opens a package.
+
+## No loan approval
+
+No tool in this list approves a loan. `start_underwriting_package` says "Does not approve the loan."
+
+A package records no credit decision, on the hosted page that was read. On 15 October 2026 a public guest package page stated "Hosted package · no credit decision is recorded", "No credit decision is recorded on a guest package.", and, in the memo, "This draft does not record a credit decision." A signed-in workspace package was not opened.
+
+That page is [this hosted package](https://securelend.ai/v1/guest/packages/gp_lQvc0NCc2bwWKgXaGHHYsGymLzWYXkzj1bk4oJmEnTs/dashboard). It was read with GET. It was not created for this page. The header is "SYNTEC OPTICS HOLDINGS, INC. · underwriting package". The page offers an Excel workbook, a Memo (Word), a Sanctions file, and a package zip. The memo cites EDGAR 10-K and 10-Q figures. Where a figure is not on the file, it says so. One line on that page: "Debt service coverage is not calculated." The spread has no debt-service line, and no debt schedule, tax return, or bank statement is on the file.
+
+`read_package` says that without a sign-in you pass the guest `packageId`. That read was not called from here. The page above was opened in a browser GET.
+
+## Trial
+
+SecureLend does not publish a public price.
+
+[Start a 7-day trial](https://securelend.ai/login?trial=1) or [talk to us](https://securelend.ai/contact). The public site footer lists `sales@securelend.ai`.
+
+The public marketing site calls that trial the Senior Analyst trial. These docs do not describe a separate Senior Analyst API. The underwriting tools are the 11 above. The sample package is a cited credit memo built from filings, and it states that no credit decision is recorded.
+
+## UWBench
+
+[UWBench](https://github.com/uwbench/uwbench) describes itself as an open, vendor-neutral benchmark for credit underwriting agents. The DOI linked from the SecureLend site is [10.5281/zenodo.22035851](https://doi.org/10.5281/zenodo.22035851). This page does not report a score. The benchmark was not run.
+
+## Not tested
+
+- No tool was called, including `start_underwriting_package` and `read_package`.
+- OAuth login was not completed.
+- Which tools reject a missing token was not tested. `tools/list` answered without a token. `read_package` says a guest `packageId` works without a sign-in, and a workspace `caseId` requires the workspace.
+- Dynamic client registration is not in the metadata.
+- Claude and ChatGPT menu labels were not checked. Add `https://mcp.securelend.ai/v1/lender/mcp` in a client that can do OAuth 2.0 with PKCE (`S256`).
+- The consumer comparison server is a different product: [Consumer marketplace MCP](/mcp/marketplace).
+- `https://github.com/orgtom78/securelend-platform` was not readable from the environment that checked this page. Tool names and descriptions on this page come from the live `tools/list` response, not from that repository.
