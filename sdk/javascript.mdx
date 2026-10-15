@@ -1,11 +1,19 @@
 ---
 title: "JavaScript/TypeScript SDK"
-description: "Complete reference for @securelend/sdk"
+description: "TypeScript reference for the consumer marketplace client, not the lender MCP."
 ---
 
 # JavaScript/TypeScript SDK
 
-Complete reference for the SecureLend TypeScript/JavaScript SDK.
+<Info>
+  This reference is the consumer marketplace client for
+  `https://mcp.securelend.ai/mcp`. Underwriting is the [Lender MCP](/mcp/lender).
+  The examples were not re-tested by calling a tool. Dollar amounts in the
+  samples are example loan figures, not a SecureLend price. There is no public
+  price.
+</Info>
+
+Complete reference for the SecureLend TypeScript/JavaScript SDK as previously published for that marketplace URL.
 
 ---
 
@@ -639,17 +647,16 @@ export default async function handler(req: Request) {
 
 ---
 
-## Rate Limits
+## Rate limits
 
-**Comparison Tools:** 100 requests per minute per IP  
-**Application Tools:** 10 requests per minute per email
+Specific per-minute limits are not listed here. The numbers that used to be on this page were not re-tested on 15 October 2026, so they are not restated as current limits.
 
-The SDK automatically handles rate limiting with exponential backoff.
+The client options below are the ones this page already showed. They were not re-tested:
 
 ```typescript
 const securelend = new SecureLend({
-  retries: 3, // Retry up to 3 times on rate limit
-  timeout: 30000, // 30 second timeout
+  retries: 3,
+  timeout: 30000,
 });
 ```
 
@@ -730,8 +737,8 @@ function validateLoanRequest(amount: number, purpose: string) {
     Practical examples and patterns
   </Card>
 
-  <Card title="Tool Reference" icon="book" href="/mcp/tools">
-    All 20 tools documented
+  <Card title="Marketplace tools" icon="book" href="/mcp/marketplace">
+    The 20 tool names from tools/list
   </Card>
 
   <Card

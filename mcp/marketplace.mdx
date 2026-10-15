@@ -1,0 +1,134 @@
+---
+title: Consumer marketplace MCP
+description: Separate consumer comparison server at mcp.securelend.ai/mcp. Not the lender underwriting MCP.
+---
+
+This is not the underwriting server. Underwriting is the [Lender MCP](/mcp/lender).
+
+**URL:** `https://mcp.securelend.ai/mcp`
+
+SecureLend, Inc. is a US (Delaware) company. This URL is a consumer marketplace. It compares loans, cards, and bank accounts, and it can submit a lending enquiry. It does not expose the 11 lender tools.
+
+Checked on 15 October 2026. No tool was called.
+
+- `initialize` returned protocol `2025-03-26` and server info `securelend` version `1.0.0`.
+- `tools/list` without a bearer token returned the 20 tools below.
+- GET returned 404 and `{"error":"not_found"}`. A browser visit is not an MCP session.
+
+The TypeScript pages in this site describe a client aimed at this URL. See [SDK overview](/sdk/overview). Those pages were not re-tested by calling a tool.
+
+There is no public price. [Start a 7-day trial](https://securelend.ai/login?trial=1) or [talk to us](https://securelend.ai/contact).
+
+## Tools
+
+Each line is the server `description` from `tools/list`. The anchor ids match older links into the retired tools page.
+
+### compare_personal_loans
+
+<a id="compare-personal-loans"></a>
+
+Search and compare personal loan offers from multiple lenders based on amount, purpose, and credit score.
+
+### compare_business_loans
+
+<a id="compare-business-loans"></a>
+
+Find and compare business loans based on amount, industry, revenue, and purpose.
+
+### compare_personal_mortgages
+
+<a id="compare-personal-mortgages"></a>
+
+Compare residential mortgage products and rates based on property value, loan amount, and credit score.
+
+### compare_business_mortgages
+
+<a id="compare-business-mortgages"></a>
+
+Compare commercial real estate financing options for business properties.
+
+### compare_car_loans
+
+<a id="compare-car-loans"></a>
+
+Find the best auto loan rates for new or used vehicles based on credit score and loan amount.
+
+### compare_student_loans
+
+<a id="compare-student-loans"></a>
+
+Compare student loan options and refinancing rates based on degree type and amount.
+
+### compare_business_credit_cards
+
+<a id="compare-business-credit-cards"></a>
+
+Find business credit cards matching criteria like rewards type, annual fee, and credit score.
+
+### compare_personal_credit_cards
+
+<a id="compare-personal-credit-cards"></a>
+
+Compare personal credit card offers with rewards, cash back, and travel benefits.
+
+### compare_business_banking
+
+<a id="compare-business-banking"></a>
+
+Compare business checking accounts, features, fees, and transaction limits.
+
+### compare_personal_banking
+
+<a id="compare-personal-banking"></a>
+
+Find the best personal checking accounts with desired features and benefits.
+
+### compare_savings_accounts
+
+<a id="compare-savings-accounts"></a>
+
+Compare high-yield savings account rates and minimum balance requirements.
+
+### calculate_loan_payment
+
+<a id="calculate-loan-payment"></a>
+
+Calculate monthly loan payments with principal, interest, and total cost breakdown.
+
+### calculate_mortgage_payment
+
+<a id="calculate-mortgage-payment"></a>
+
+Calculate PITI mortgage payments including property taxes and insurance.
+
+### compare_lease_vs_purchase
+
+<a id="compare-lease-vs-purchase"></a>
+
+Compare total costs of leasing versus buying a vehicle over time.
+
+### get_offer
+
+Create and submit a user-confirmed lending enquiry to one selected lender and return the created application record and next-step details. Collect the applicant's first name, last name, and email before submitting. Phone is optional.
+
+### get_multiple_offers
+
+Create and submit a user-confirmed lending enquiry to multiple selected lenders and return the created application record and routing details. Collect the applicant's first name, last name, and email before submitting. Phone is optional.
+
+### display_offer_form
+
+Retrieve a cached offer and show a pre-filled enquiry review form before user confirmation.
+
+### track_offer_status
+
+Retrieve the status of previously submitted SecureLend enquiries by application ID or applicant email.
+
+### display_upload_documents_form
+
+Display a form that lets users upload supporting documents for an existing application.
+
+### submit_documents
+
+Generate a presigned upload URL and create document metadata for an application in SecureLend storage.
+
+`get_offer`, `get_multiple_offers`, and `submit_documents` describe writes. They were not called.

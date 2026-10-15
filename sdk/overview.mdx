@@ -1,11 +1,20 @@
 ---
 title: "SDK Overview"
-description: "Official TypeScript SDK for SecureLend financial services"
+description: "TypeScript SDK aimed at the consumer marketplace MCP, not the lender underwriting server."
 ---
 
 # SDK Overview
 
-The SecureLend SDK provides a type-safe TypeScript/JavaScript wrapper for connecting to the SecureLend MCP server programmatically.
+<Info>
+  These SDK pages describe a TypeScript client for the consumer marketplace at
+  `https://mcp.securelend.ai/mcp`. They are not the lender underwriting MCP.
+  See [Lender MCP](/mcp/lender). On 15 October 2026, `tools/list` on the
+  marketplace returned the 20 names on the [marketplace page](/mcp/marketplace).
+  Parameter lists, rate limits, and lender coverage below were not re-tested,
+  and no marketplace tool was called.
+</Info>
+
+The SecureLend SDK provides a type-safe TypeScript/JavaScript wrapper for connecting to the consumer marketplace MCP programmatically.
 
 **Use the SDK when you want to:**
 
@@ -14,11 +23,12 @@ The SecureLend SDK provides a type-safe TypeScript/JavaScript wrapper for connec
 - Automate loan research and analysis
 - Create financial dashboards and reporting
 
-**Use Claude/ChatGPT when you want to:**
+**Use an MCP chat client when you want to:**
 
-- Interactive financial advice through AI assistants
-- Quick loan comparisons without coding
-- Natural language financial queries
+- Ask for a comparison in a chat, after you connect a server
+- Skip writing a client
+
+Chat menu labels were not checked. Underwriting in chat uses the [Lender MCP](/mcp/lender), not this SDK.
 
 ---
 
@@ -53,7 +63,7 @@ const result = await securelend.compareBusinessLoans({
 console.log(`Found ${result.offers.length} loan offers`);
 ```
 
-That's it! No API keys required - the SDK connects to our public MCP server.
+The sample above targets the marketplace URL. Whether a live call still runs without an API key was not re-tested. `tools/list` on that server answered without a bearer token on 15 October 2026.
 
 ---
 
@@ -61,7 +71,7 @@ That's it! No API keys required - the SDK connects to our public MCP server.
 
 ### 🔌 Direct MCP Connection
 
-Connects directly to `https://mcp.securelend.ai/mcp` - the same server used by Claude and ChatGPT.
+Connects to `https://mcp.securelend.ai/mcp`, the consumer marketplace. It is not `https://mcp.securelend.ai/v1/lender/mcp`.
 
 ```typescript
 // Default configuration (recommended)
@@ -94,9 +104,9 @@ const response: LoanComparisonResponse =
   await securelend.compareBusinessLoans(request);
 ```
 
-### 🚀 Zero Configuration
+### 🚀 Default client
 
-No API keys, no authentication, no setup. Just install and start using:
+The published examples construct a client with no API key. That path was not re-tested by calling a tool:
 
 ```typescript
 import { SecureLend } from "@securelend/sdk";
@@ -107,7 +117,7 @@ const securelend = new SecureLend();
 
 ### 🎯 20 Financial Tools
 
-Access all SecureLend tools programmatically:
+These four groups are the 20 marketplace tools from `tools/list`, not the lender tools:
 
 <CardGroup cols={2}>
   <Card title="6 Loan Comparison Tools" icon="hand-holding-dollar">
@@ -146,18 +156,17 @@ Access all SecureLend tools programmatically:
                 ↓ MCP Protocol
 ┌───────────────────────────────────┐
 │   mcp.securelend.ai/mcp           │
-│   • 20 financial tools            │
-│   • Real-time lender data         │
-│   • 200+ lender integrations      │
+│   • Consumer marketplace          │
+│   • 20 tools on tools/list        │
+│   • Not the lender MCP            │
 └───────────────────────────────────┘
 ```
 
 **Benefits:**
 
-- ✅ Always up-to-date (live server connection)
-- ✅ No API keys to manage
-- ✅ No rate limits for comparison tools
-- ✅ Type-safe development experience
+- The client talks to the marketplace URL in the diagram
+- Type-safe development experience, as this SDK page describes it
+- Rate limits were not re-tested
 
 ---
 
@@ -256,40 +265,40 @@ async function showFinancingOptions(businessData) {
   <Accordion title="comparePersonalLoans()">
     Compare personal loan offers **Parameters:** loanAmount, purpose,
     creditScore, employmentStatus, monthlyIncome, state **Returns:** Array of
-    loan offers with rates, terms, lender details [Full reference
-    →](/mcp/tools#compare-personal-loans)
+    loan offers with rates, terms, lender details [Marketplace tool
+    →](/mcp/marketplace#compare-personal-loans)
   </Accordion>
 
   <Accordion title="compareBusinessLoans()">
     Compare business loan offers **Parameters:** loanAmount, purpose,
     annualRevenue, industry, state, creditScore **Returns:** Business loan
-    offers with approval likelihood [Full reference
-    →](/mcp/tools#compare-business-loans)
+    offers with approval likelihood [Marketplace tool
+    →](/mcp/marketplace#compare-business-loans)
   </Accordion>
 
   <Accordion title="compareCarLoans()">
     Compare auto loan rates **Parameters:** loanAmount, isNew, creditScore,
-    state **Returns:** Auto loan rate comparisons [Full reference
-    →](/mcp/tools#compare-car-loans)
+    state **Returns:** Auto loan rate comparisons [Marketplace tool
+    →](/mcp/marketplace#compare-car-loans)
   </Accordion>
 
   <Accordion title="compareStudentLoans()">
     Compare student loan options **Parameters:** loanAmount, degreeType,
     creditScore, coSignerCreditScore, state **Returns:** Student loan offers by
-    lender [Full reference →](/mcp/tools#compare-student-loans)
+    lender [Marketplace tool →](/mcp/marketplace#compare-student-loans)
   </Accordion>
 
   <Accordion title="comparePersonalMortgages()">
     Compare mortgage rates **Parameters:** loanAmount, loanType, homePrice,
     downPayment, creditScore, propertyType, state **Returns:** Mortgage rate
-    comparisons [Full reference →](/mcp/tools#compare-personal-mortgages)
+    comparisons [Marketplace tool →](/mcp/marketplace#compare-personal-mortgages)
   </Accordion>
 
   <Accordion title="compareBusinessMortgages()">
     Compare commercial mortgages **Parameters:** loanAmount, loanType,
     homePrice, downPayment, creditScore, propertyType, state **Returns:**
-    Commercial mortgage options [Full reference
-    →](/mcp/tools#compare-business-mortgages)
+    Commercial mortgage options [Marketplace tool
+    →](/mcp/marketplace#compare-business-mortgages)
   </Accordion>
 </AccordionGroup>
 
@@ -297,28 +306,28 @@ async function showFinancingOptions(businessData) {
 
 <AccordionGroup>
   <Accordion title="comparePersonalBanking()">
-    Compare checking/savings accounts [Full reference
-    →](/mcp/tools#compare-personal-banking)
+    Compare checking/savings accounts [Marketplace tool
+    →](/mcp/marketplace#compare-personal-banking)
   </Accordion>
 
   <Accordion title="compareBusinessBanking()">
-    Compare business banking products [Full reference
-    →](/mcp/tools#compare-business-banking)
+    Compare business banking products [Marketplace tool
+    →](/mcp/marketplace#compare-business-banking)
   </Accordion>
 
   <Accordion title="compareSavingsAccounts()">
-    Compare high-yield savings [Full reference
-    →](/mcp/tools#compare-savings-accounts)
+    Compare high-yield savings [Marketplace tool
+    →](/mcp/marketplace#compare-savings-accounts)
   </Accordion>
 
   <Accordion title="comparePersonalCreditCards()">
-    Compare personal credit cards [Full reference
-    →](/mcp/tools#compare-personal-credit-cards)
+    Compare personal credit cards [Marketplace tool
+    →](/mcp/marketplace#compare-personal-credit-cards)
   </Accordion>
 
   <Accordion title="compareBusinessCreditCards()">
-    Compare business credit cards [Full reference
-    →](/mcp/tools#compare-business-credit-cards)
+    Compare business credit cards [Marketplace tool
+    →](/mcp/marketplace#compare-business-credit-cards)
   </Accordion>
 </AccordionGroup>
 
@@ -328,24 +337,24 @@ async function showFinancingOptions(businessData) {
   <Accordion title="calculateLoanPayment()">
     Calculate monthly loan payments **Parameters:** loanAmount, interestRate,
     loanTermInMonths **Returns:** Monthly payment, total interest, amortization
-    [Full reference →](/mcp/tools#calculate-loan-payment)
+    [Marketplace tool →](/mcp/marketplace#calculate-loan-payment)
   </Accordion>
 
   <Accordion title="calculateMortgagePayment()">
     Calculate PITI mortgage payments **Parameters:** propertyValue, downPayment,
     interestRate, loanTermInYears, propertyTaxRate, homeInsurance **Returns:**
-    Complete PITI breakdown [Full reference
-    →](/mcp/tools#calculate-mortgage-payment)
+    Complete PITI breakdown [Marketplace tool
+    →](/mcp/marketplace#calculate-mortgage-payment)
   </Accordion>
 
   <Accordion title="compareLeaseVsPurchase()">
     Compare vehicle lease vs buy **Parameters:** purchasePrice, downPayment,
     interestRate, loanTermInMonths, monthlyLeasePayment, etc. **Returns:** Total
-    cost comparison [Full reference →](/mcp/tools#compare-lease-vs-purchase)
+    cost comparison [Marketplace tool →](/mcp/marketplace#compare-lease-vs-purchase)
   </Accordion>
 </AccordionGroup>
 
-[View complete tool reference →](/mcp/tools)
+[Marketplace tool names →](/mcp/marketplace)
 
 ---
 
@@ -353,56 +362,21 @@ async function showFinancingOptions(businessData) {
 
 ### @securelend/sdk (Core)
 
-The main SDK package for TypeScript/JavaScript.
-
-**Status:** ✅ Beta - Available for testing
+The main SDK package named in this documentation.
 
 ```bash
 npm install @securelend/sdk
 ```
 
-**Platform Support:**
+A previous status line called this package beta, and listed Node.js 16+, modern browsers, edge runtimes, and React Server Components. That support list was not re-checked, so it is not restated as current.
 
-- ✅ Node.js 16+
-- ✅ Modern browsers
-- ✅ Edge runtime (Vercel, Cloudflare Workers)
-- ✅ React Server Components
+### @securelend/react
 
-### @securelend/react (Coming Soon)
+This repository does not document a React package. A previous "in development, Q1 2025" note is not a current statement, so the sample import is removed.
 
-React hooks and components.
+### Python SDK
 
-**Status:** 🔄 In Development - Q1 2025
-
-```typescript
-import { useLoans } from '@securelend/react';
-
-function LoanComparison() {
-  const { data, loading, error } = useLoans({
-    loanAmount: 200000,
-    purpose: 'equipment'
-  });
-
-  if (loading) return <Spinner />;
-  return <LoanList offers={data.offers} />;
-}
-```
-
-### Python SDK (Planned)
-
-Python client library.
-
-**Status:** 🔄 Planned - Q2 2025
-
-```python
-from securelend import SecureLend
-
-securelend = SecureLend()
-loans = securelend.compare_business_loans(
-    loan_amount=200000,
-    purpose='equipment'
-)
-```
+This repository does not document a Python client. The snippet that used to sit here is removed because the "planned for Q2 2025" date is not a current statement.
 
 ---
 
@@ -416,17 +390,12 @@ loans = securelend.compare_business_loans(
 - ✅ Want to integrate with existing systems
 - ✅ Need automated workflows
 
-### Use Claude/ChatGPT when you:
+### Use the lender MCP when you:
 
-- ✅ Want interactive conversations
-- ✅ Need natural language queries
-- ✅ Want quick one-off comparisons
-- ✅ Prefer guided assistance
-- ✅ Don't want to write code
+- Need underwriting tools, a cited memo, or a hosted package
+- Are connecting a chat client to SecureLend for credit work
 
-**Both connect to the same MCP server**, so you get identical data and capabilities.
-
-[Setup Claude Desktop →](/mcp/setup#claude-desktop)
+That server is documented on [Lender MCP](/mcp/lender). It is not this SDK. Menu labels in Claude and ChatGPT were not checked.
 
 ---
 
@@ -441,8 +410,8 @@ loans = securelend.compare_business_loans(
     Practical examples and patterns
   </Card>
 
-  <Card title="Tool Reference" icon="book" href="/mcp/tools">
-    All 20 tools documented
+  <Card title="Marketplace tools" icon="book" href="/mcp/marketplace">
+    The 20 tool names from tools/list
   </Card>
 
   <Card

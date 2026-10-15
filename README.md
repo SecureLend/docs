@@ -5,10 +5,10 @@ This repository contains the official SecureLend developer documentation, powere
 📚 Live docs: https://docs.securelend.ai
 
 ## Structure
-- Platform concepts and environments
-- SDK documentation
-- MCP integrations
-- API references and guides
+- Lender MCP for underwriting
+- Consumer marketplace MCP
+- SDK documentation for the marketplace client
+- Platform, API placeholders, and guides
 
 ## Editing docs
 - All docs are written in MDX
